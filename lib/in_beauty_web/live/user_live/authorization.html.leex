@@ -1,0 +1,401 @@
+<ul
+  class="hidden md:grid grid-cols-3 gap-8 2xl:gap-12 mt-12 dark:text-rose-100"
+  x-data="{ tab: 'login' }"
+>
+  <li
+    class="col-span-1 row-span-1 rounded-2xl p-6  2xl:p-8 h-48 shadow-2xl"
+    @click="tab = 'signup'"
+    :class="{
+      'bg-rose-300': tab === 'signup',
+      'bg-rose-100': tab !== 'signup',
+      'dark:bg-rose-100': tab === 'signup',
+      'dark:bg-midnight-500': tab !== 'signup'
+    }"
+  >
+    <p
+      class="flex items-center justify-center w-full h-full text-3xl font-extrabold xl:text-3xl text-main-pink dark:text-rose-100"
+      :class="{ 'dark:text-main-pink': tab === 'signup' }"
+    >
+      <%= gettext "Create" %>
+    </p>
+  </li>
+  <li
+    class="col-span-1 row-start-2 rounded-2xl p-6  2xl:p-8 h-48 shadow-2xl"
+    @click="tab = 'login'"
+    :class="{
+      'bg-rose-300': tab === 'login',
+      'bg-rose-100': tab !== 'login',
+      'dark:bg-rose-100': tab === 'login',
+      'dark:bg-midnight-500': tab !== 'login'
+    }"
+  >
+    <p
+      class="flex items-center justify-center w-full h-full text-3xl font-extrabold xl:text-3xl text-main-pink dark:text-rose-100"
+      :class="{ 'dark:text-main-pink': tab === 'login' }"
+    >
+      <%= gettext "Login" %>
+    </p>
+  </li>
+  <li
+    class="flex flex-col items-center bg-rose-100 dark:bg-midnight-500 rounded-2xl row-span-3 col-span-2"
+    x-show="tab === 'signup'"
+    x-transition:enter="transition ease-out duration-500"
+    x-transition:enter-start="transform -translate-y-1/2"
+    x-transition:enter-end="transform"
+  >
+    <div class="flex-1 w-full px-6 2xl:p-8">
+      <%= live_component(
+            @socket,
+            UserFormComponent,
+            fields: [:first_name, :last_name, :email, :phone_number, :password],
+            required_fields: [:first_name, :last_name, :email, :phone_number, :password],
+            changeset: @changeset,
+            button_text:  gettext("Create"),
+            live_action: :sign_up,
+            handle_events: [phx_change: :validate, phx_submit: :sign_up],
+            id_prefix: "sign_up",
+            mobile: false
+          )
+      %>
+    </div>
+  </li>
+  <li
+    class="bg-rose-100 dark:bg-midnight-500 rounded-2xl row-span-3 col-span-2 md:w-full p-6  2xl:p-8"
+    x-show="tab === 'login'"
+    x-transition:enter="transition ease-out duration-500"
+    x-transition:enter-start="transform -translate-y-1/2"
+    x-transition:enter-end="transform"
+  >
+    <%= live_component(
+          @socket,
+          UserFormComponent,
+          fields: [:email, :password],
+          required_fields: [:email, :password],
+          changeset: @changeset,
+          button_text:  gettext("Sign In"),
+          live_action: :sign_in,
+          handle_events: [phx_change: :validate, phx_submit: :sign_in],
+          id_prefix: "sign_in",
+          mobile: false
+        )
+    %>
+  </li>
+  <%# <div class="flex bg-rose-100 dark:bg-midnight-500 col-span-2 xl:col-span-1 row-span-1 rounded-2xl p-6  2xl:p-8">
+    <div class="p-2">
+      <p class="flex items-center text-rose-600 mb-2">
+        <span class="w-4 h-4 mr-2 inline-flex items-center justify-center bg-rose-600 text-white rounded-full flex-shrink-0">
+          <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" class="w-3 h-3" viewBox="0 0 24 24">
+            <path d="M20 6L9 17l-5-5"></path>
+          </svg>
+        </span>Membership Perks
+      </p>
+      <p class="flex items-center text-rose-600 mb-2">
+        <span class="w-4 h-4 mr-2 inline-flex items-center justify-center bg-rose-600 text-white rounded-full flex-shrink-0">
+          <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" class="w-3 h-3" viewBox="0 0 24 24">
+            <path d="M20 6L9 17l-5-5"></path>
+          </svg>
+        </span>Order History
+      </p>
+      <p class="flex items-center text-rose-600 mb-2">
+        <span class="w-4 h-4 mr-2 inline-flex items-center justify-center bg-rose-600 text-white rounded-full flex-shrink-0">
+          <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" class="w-3 h-3" viewBox="0 0 24 24">
+            <path d="M20 6L9 17l-5-5"></path>
+          </svg>
+        </span>Favorites Products
+      </p>
+      <p class="flex items-center text-rose-600 mb-2">
+        <span class="w-4 h-4 mr-2 inline-flex items-center justify-center bg-rose-600 text-white rounded-full flex-shrink-0">
+          <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" class="w-3 h-3" viewBox="0 0 24 24">
+            <path d="M20 6L9 17l-5-5"></path>
+          </svg>
+        </span>Special For You
+      </p>
+      <p class="flex items-center text-rose-600 mb-2">
+        <span class="w-4 h-4 mr-2 inline-flex items-center justify-center bg-rose-600 text-white rounded-full flex-shrink-0">
+          <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" class="w-3 h-3" viewBox="0 0 24 24">
+            <path d="M20 6L9 17l-5-5"></path>
+          </svg>
+        </span>Quick Checkout
+      </p>
+    </div>
+  </div> %>
+  <li
+    class="col-span-1 row-start-3 rounded-2xl p-6  2xl:p-8 h-48 shadow-2xl"
+    @click="tab = 'forget_password'"
+    :class="{
+      'bg-rose-300': tab === 'forget_password',
+      'bg-rose-100': tab !== 'forget_password',
+      'dark:bg-rose-100': tab === 'forget_password',
+      'dark:bg-midnight-500': tab !== 'forget_password'
+    }"
+  >
+    <p
+      class="flex items-center justify-center w-full h-full text-3xl font-extrabold xl:text-3xl text-main-pink dark:text-rose-100"
+      :class="{ 'dark:text-main-pink': tab === 'forget_password' }"
+    >
+      <%= gettext "Forget?" %>
+    </p>
+  </li>
+  <li
+    class="bg-rose-100 dark:bg-midnight-500 rounded-2xl w-full row-span-3 col-span-2 p-6  2xl:p-8"
+    x-show="tab === 'forget_password'"
+    x-transition:enter="transition ease-out duration-500"
+    x-transition:enter-start="transform -translate-y-1/2"
+    x-transition:enter-end="transform"
+  >
+    <%= live_component(
+          @socket,
+          UserFormComponent,
+          fields: [:email],
+          required_fields: [:email],
+          changeset: @changeset,
+          button_text:  gettext("Send Email"),
+          live_action: :password_recovery,
+          handle_events: [phx_change: :validate, phx_submit: :password_recovery],
+          id_prefix: "password_recovery",
+          mobile: false
+        )
+    %>
+  </li>
+  <%# <div class=" rounded-2xl flex flex-wrap">
+    <!-- icons -->
+    <div class="grid grid-cols-3 gap-4 mx-auto">
+      <!-- Google icon -->
+      <div class="bg-rose-300 h-16 w-16 flex flex-col items-center justify-center text-2xl font-extrabold rounded-2xl">
+        <div class="p-2 bg-white rounded-full">
+          <svg class="w-6" viewBox="0 0 533.5 544.3">
+            <path d="M533.5 278.4c0-18.5-1.5-37.1-4.7-55.3H272.1v104.8div47c-6.1 33.8-25.7 63.7-54.4 82.7v68h87.7c51.5-47.4 81.1-117.4 81.1-200.2z" fill="#4285f4"/>
+            <path d="M272.1 544.3c73.4 0 135.3-24.1 180.4-65.7l-87.7-68c-24.4 16.6-55.9 26-92.6 26-71 0-131.2-47.9-152.8-112.3H28.9v70.1c46.2 91.9 140.3 149.9 243.2 149.9z" fill="#34a853"/>
+            <path d="M119.3 324.3c-11.4-33.8-11.4-70.4 0-104.2V150H28.9c-38.6 76.9-38.6 167.5 0 244.4l90.4-70.1z" fill="#fbbc04"/>
+            <path d="M272.1 107.7c38.8-.6 76.3 14 104.4 40.8l77.7-77.7C405 24.6 339.7-.8 272.1 0 169.2 0 75.1 58 28.9 150l90.4 70.1c21.5-64.5 81.8-112.4 152.8-112.4z" fill="#ea4335"/>
+          </svg>
+        </div>
+      </div>
+      <!-- Github Icon -->
+      <div class="bg-rose-300 h-16 w-16 flex flex-col items-center justify-center text-2xl font-extrabold rounded-2xl">
+        <div class="p-2 bg-white rounded-full">
+          <svg class="w-6" viewBox="0 0 32 32">
+            <path fill-rule="evenodd" d="M16 4C9.371 4 4 9.371 4 16c0 5.3 3.438 9.8 8.207 11.387.602.11.82-.258.82-.578 0-.286-.011-1.04-.015-2.04-3.34.723-4.043-1.609-4.043-1.609-.547-1.387-1.332-1.758-1.332-1.758-1.09-.742.082-.726.082-.726 1.203.086 1.836 1.234 1.836 1.234 1.07 1.836 2.808 1.305 3.492 1 .11-.777.422-1.305.762-1.605-2.664-.301-5.465-1.332-5.465-5.93 0-1.313.469-2.383 1.234-3.223-.121-.3-.535-1.523.117-3.175 0 0 1.008-.32 3.301 1.23A11.487 11.487 0 0116 9.805c1.02.004 2.047.136 3.004.402 2.293-1.55 3.297-1.23 3.297-1.23.656 1.652.246 2.875.12 3.175.77.84 1.231 1.91 1.231 3.223 0 4.61-2.804 5.621-5.476 5.922.43.367.812 1.101.812 2.219 0 1.605-.011 2.898-.011 3.293 0 .32.214.695.824.578C24.566 25.797 28 21.3 28 16c0-6.629-5.371-12-12-12z" />
+          </svg>
+        </div>
+      </div>
+      <!-- Instagram Icon -->
+      <div class="bg-rose-300 h-16 w-16 flex flex-col items-center justify-center text-2xl font-extrabold rounded-2xl">
+        <div class="p-2 bg-white rounded-full">
+          <svg class="w-6" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+            <g id="Symbol">
+              <radialGradient cx="56.35" cy="19.218" gradientTransform="matrix(.9986 -.05234 .04449 .8488 -36.974 443.801)" gradientUnits="userSpaceOnUse" id="SVGID_1_" r="711.335">
+                <stop offset="0" stop-color="#fed576"/>
+                <stop offset=".263" stop-color="#f47133"/>
+                <stop offset=".609" stop-color="#bc3081"/>
+                <stop offset="1" stop-color="#4c63d2"/>
+              </radialGradient>
+              <path d="M96.1 23.2c-16.2 6.3-29.9 14.7-43.6 28.4C38.8 65.2 30.4 79 24.1 95.1c-6.1 15.6-10.2 33.5-11.4 59.7-1.2 26.2-1.5 34.6-1.5 101.4s.3 75.2 1.5 101.4c1.2 26.2 5.4 44.1 11.4 59.7 6.3 16.2 14.7 29.9 28.4 43.6 13.7 13.7 27.4 22.1 43.6 28.4 15.6 6.1 33.5 10.2 59.7 11.4 26.2 1.2 34.6 1.5 101.4 1.5 66.8 0 75.2-.3 101.4-1.5 26.2-1.2 44.1-5.4 59.7-11.4 16.2-6.3 29.9-14.7 43.6-28.4 13.7-13.7 22.1-27.4 28.4-43.6 6.1-15.6 10.2-33.5 11.4-59.7 1.2-26.2 1.5-34.6 1.5-101.4s-.3-75.2-1.5-101.4c-1.2-26.2-5.4-44.1-11.4-59.7C484 79 475.6 65.2 462 51.6c-13.7-13.7-27.4-22.1-43.6-28.4-15.6-6.1-33.5-10.2-59.7-11.4-26.2-1.2-34.6-1.5-101.4-1.5s-75.2.3-101.4 1.5c-26.3 1.1-44.2 5.3-59.8 11.4zM356.6 56c24 1.1 37 5.1 45.7 8.5 11.5 4.5 19.7 9.8 28.3 18.4 8.6 8.6 13.9 16.8 18.4 28.3 3.4 8.7 7.4 21.7 8.5 45.7 1.2 25.9 1.4 33.7 1.4 99.4s-.3 73.5-1.4 99.4c-1.1 24-5.1 37-8.5 45.7-4.5 11.5-9.8 19.7-18.4 28.3-8.6 8.6-16.8 13.9-28.3 18.4-8.7 3.4-21.7 7.4-45.7 8.5-25.9 1.2-33.7 1.4-99.4 1.4s-73.5-.3-99.4-1.4c-24-1.1-37-5.1-45.7-8.5-11.5-4.5-19.7-9.8-28.3-18.4-8.6-8.6-13.9-16.8-18.4-28.3-3.4-8.7-7.4-21.7-8.5-45.7-1.2-25.9-1.4-33.7-1.4-99.4s.3-73.5 1.4-99.4c1.1-24 5.1-37 8.5-45.7 4.5-11.5 9.8-19.7 18.4-28.3 8.6-8.6 16.8-13.9 28.3-18.4 8.7-3.4 21.7-7.4 45.7-8.5 25.9-1.2 33.7-1.4 99.4-1.4s73.5.2 99.4 1.4z" fill="url(#SVGID_1_)"/>
+              <radialGradient cx="154.073" cy="134.55" gradientTransform="matrix(.9986 -.05234 .04449 .8488 -24.362 253.295)" gradientUnits="userSpaceOnUse" id="SVGID_2_" r="365.28">
+                <stop offset="0" stop-color="#fed576"/>
+                <stop offset=".263" stop-color="#f47133"/>
+                <stop offset=".609" stop-color="#bc3081"/>
+                <stop offset="1" stop-color="#4c63d2"/>
+              </radialGradient>
+              <path d="M130.9 256.3c0 69.8 56.6 126.3 126.3 126.3S383.5 326 383.5 256.3 327 130 257.2 130s-126.3 56.5-126.3 126.3zm208.3 0c0 45.3-36.7 82-82 82s-82-36.7-82-82 36.7-82 82-82 82 36.7 82 82z" fill="url(#SVGID_2_)"/>
+              <circle cx="388.6" cy="125" r="29.5" fill="#654c9f"/>
+            </g>
+          </svg>
+        </div>
+      </div>
+      <!-- VK Icon -->
+      <div class="bg-rose-300 h-16 w-16 flex flex-col items-center justify-center text-2xl font-extrabold rounded-2xl">
+        <div class="p-2 bg-white rounded-full">
+          <svg class="w-6 h-6" fill="none" height="48" viewBox="0 0 48 48" width="48" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0 23C0 12.158 0 6.737 3.368 3.368S12.158 0 23 0h2c10.842 0 16.264 0 19.632 3.368C48 6.737 48 12.158 48 23v2c0 10.842 0 16.264-3.368 19.632C41.263 48 35.842 48 25 48h-2c-10.842 0-16.263 0-19.632-3.368C0 41.263 0 35.842 0 25z" fill="#2787f5"/>
+            <path clip-rule="evenodd" d="M13 15H9.5c-1 0-1.2.47-1.2.99 0 .927 1.187 5.525 5.526 11.606C16.719 31.749 20.795 34 24.504 34c2.225 0 2.5-.5 2.5-1.361V29.5c0-1 .211-1.2.916-1.2.519 0 1.409.26 3.486 2.262C33.78 32.935 34.171 34 35.506 34h3.5c1.001 0 1.501-.5 1.213-1.487-.316-.983-1.45-2.41-2.953-4.101-.816-.964-2.04-2.003-2.41-2.522-.52-.667-.372-.964 0-1.557 0 0 4.264-6.007 4.71-8.046.222-.742 0-1.287-1.06-1.287h-3.5c-.89 0-1.3.47-1.523.99 0 0-1.78 4.338-4.302 7.156-.816.816-1.187 1.076-1.632 1.076-.223 0-.545-.26-.545-1.001v-6.934c0-.89-.258-1.287-1-1.287h-5.501c-.557 0-.891.413-.891.805 0 .843 1.26 1.038 1.39 3.41v5.155c0 1.13-.203 1.335-.648 1.335-1.187 0-4.074-4.358-5.786-9.344C14.232 15.39 13.896 15 13 15z" fill="#fff" fill-rule="evenodd"/>
+          </svg>
+        </div>
+      </div>
+      <!-- Odnoklassniki Icon -->
+      <div class="bg-rose-300 h-16 w-16 flex flex-col items-center justify-center text-2xl font-extrabold rounded-2xl">
+        <div class="p-2 bg-white rounded-full">
+          <svg class="w-6 h-6" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" x="0" y="0" width="389.404" height="387.417" viewBox="0 0 389.404 387.417" xml:space="preserve">
+            <path fill="#FAAB62" d="M389.404 330.724c0 31.312-25.383 56.693-56.693 56.693H56.693C25.382 387.417 0 362.036 0 330.724V56.693C0 25.382 25.382 0 56.693 0h276.018c31.311 0 56.693 25.382 56.693 56.693v274.031z"/>
+            <path fill="#F7931E" d="M387.404 329.317c0 30.989-25.122 56.11-56.111 56.11H58.11c-30.989 0-56.11-25.121-56.11-56.11V58.1C2 27.111 27.122 1.99 58.11 1.99h273.183c30.989 0 56.111 25.122 56.111 56.11v271.217z"/>
+            <path fill="#FFF" d="M194.485 57.901c-38.593 0-69.878 31.286-69.878 69.878 0 38.593 31.285 69.881 69.878 69.881s69.878-31.288 69.878-69.881c0-38.592-31.285-69.878-69.878-69.878zm0 98.766c-15.953 0-28.886-12.934-28.886-28.887s12.933-28.886 28.886-28.886 28.886 12.933 28.886 28.886-12.933 28.887-28.886 28.887z"/>
+            <g fill="#FFF">
+              <path d="M219.155 253.262c27.975-5.699 44.739-18.947 45.626-19.658 8.186-6.565 9.501-18.523 2.936-26.71-6.564-8.186-18.521-9.501-26.709-2.937-.173.14-18.053 13.856-47.472 13.876-29.418-.02-47.676-13.736-47.849-13.876-8.188-6.564-20.145-5.249-26.709 2.937-6.565 8.187-5.25 20.145 2.936 26.71.899.721 18.355 14.314 47.114 19.879l-40.081 41.888c-7.284 7.554-7.065 19.582.489 26.866a18.936 18.936 0 0013.187 5.322c4.978 0 9.951-1.945 13.679-5.812l37.235-39.665 40.996 39.922c7.428 7.416 19.456 7.404 26.87-.021 7.414-7.426 7.405-19.456-.021-26.87l-42.227-41.851z"/>
+              <path d="M193.536 217.832c-.047 0 .046.001 0 .002-.046-.001.047-.002 0-.002z"/>
+            </g>
+          </svg>
+        </div>
+      </div>
+      <!-- facebook Icon -->
+      <div class="bg-rose-300 h-16 w-16 flex flex-col items-center justify-center text-2xl font-extrabold rounded-2xl">
+        <div class="p-2 bg-white rounded-full">
+          <svg class="h-6" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" x="0" y="0" viewBox="0 0 408.788 408.788" xml:space="preserve">
+            <path d="M353.701 0H55.087C24.665 0 .002 24.662.002 55.085v298.616c0 30.423 24.662 55.085 55.085 55.085div47.275l.251-146.078h-37.951a8.954 8.954 0 01-8.954-8.92l-.182-47.087a8.955 8.955 0 018.955-8.989h37.882v-45.498c0-52.8 32.247-81.55 79.348-81.55h38.65a8.955 8.955 0 018.955 8.955v39.704a8.955 8.955 0 01-8.95 8.955l-23.719.011c-25.615 0-30.575 12.172-30.575 30.035v39.389h56.285c5.363 0 9.524 4.683 8.892 10.009l-5.581 47.087a8.955 8.955 0 01-8.892 7.901h-50.453l-.251 146.078h87.631c30.422 0 55.084-24.662 55.084-55.084V55.085C408.786 24.662 384.124 0 353.701 0z" fill="#475993"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div> %>
+</ul>
+<!-- mobile version -->
+<ul
+  class="grid md:hidden grid-cols-6 gap-2 xs:gap-4 mt-4 xs:mt-8 dark:text-rose-100"
+  x-data="{ tab: 'login' }"
+>
+  <li
+    class="col-span-3 rounded-2xl p-3 xs:p-6"
+    @click="tab = 'login'"
+    :class="{
+      'bg-rose-300': tab === 'login',
+      'bg-rose-100': tab !== 'login',
+      'dark:bg-rose-100': tab === 'login',
+      'dark:bg-midnight-500': tab !== 'login'
+    }"
+  >
+    <p
+      class="text-xl xs:text-2xl sm:text-3xl font-extrabold text-main-pink dark:text-rose-100"
+      :class="{ 'dark:text-main-pink': tab === 'login' }"
+    >
+      <%= gettext "Login" %>
+    </p>
+  </li>
+  <li
+    class="col-span-3 rounded-2xl p-3 xs:p-6"
+    @click="tab = 'signup'"
+    :class="{
+      'bg-rose-300': tab === 'signup',
+      'bg-rose-100': tab !== 'signup',
+      'dark:bg-rose-100': tab === 'signup',
+      'dark:bg-midnight-500': tab !== 'signup'
+    }"
+  >
+    <p
+      class="text-xl xs:text-2xl sm:text-3xl font-extrabold text-main-pink dark:text-rose-100"
+      :class="{ 'dark:text-main-pink': tab === 'signup' }"
+    >
+      <%= gettext "Create Account" %>
+    </p>
+  </li>
+  <li
+    class="flex flex-col items-center bg-rose-100 dark:bg-midnight-500 rounded-2xl p-3 xs:p-6 col-span-full"
+    x-show="tab === 'signup'"
+    x-transition:enter="transition ease-out duration-500"
+    x-transition:enter-start="transform -translate-x-full"
+    x-transition:enter-end="transform"
+  >
+    <div class="flex-1 w-full">
+      <%= live_component(
+            @socket,
+            UserFormComponent,
+            fields: [:first_name, :last_name, :email, :phone_number, :password],
+            required_fields: [:first_name, :last_name, :email, :phone_number, :password],
+            changeset: @changeset,
+            button_text:  gettext("Create"),
+            live_action: :sign_up,
+            handle_events: [phx_change: :validate, phx_submit: :sign_up],
+            id_prefix: "sign_up",
+            mobile: true
+          )
+      %>
+    </div>
+  </li>
+  <li
+    class="bg-rose-100 dark:bg-midnight-500 rounded-2xl w-full p-6 col-span-full"
+    x-show="tab === 'login'"
+    x-transition:enter="transition ease-out duration-500"
+    x-transition:enter-start="transform -translate-x-full"
+    x-transition:enter-end="transform"
+  >
+    <%= live_component(
+          @socket,
+          UserFormComponent,
+          fields: [:email, :password],
+          required_fields: [:email, :password],
+          changeset: @changeset,
+          button_text:  gettext("Sign In"),
+          live_action: :sign_in,
+          handle_events: [phx_change: :validate, phx_submit: :sign_in, phx_trigger_action: @trigger_submit],
+          form_action: Routes.user_session_path(@socket, :create),
+          id_prefix: "sign_in",
+          mobile: true
+        )
+    %>
+  </li>
+  <li
+    class="rounded-2xl col-span-full p-3 xs:p-6"
+    @click="tab = 'forget_password'"
+    :class="{
+      'bg-rose-300': tab === 'forget_password',
+      'bg-rose-100': tab !== 'forget_password',
+      'dark:bg-rose-100': tab === 'forget_password',
+      'dark:bg-midnight-500': tab !== 'forget_password'
+    }"
+  >
+    <p
+      class="text-xl xs:text-2xl sm:text-3xl font-extrabold text-main-pink dark:text-rose-100 mb-4"
+      :class="{ 'dark:text-main-pink': tab === 'forget_password' }"
+    >
+      <%= gettext("Forget Password?") %>
+    </p>
+  </li>
+  <li
+    class="bg-rose-100 dark:bg-midnight-500 rounded-2xl w-full p-6 col-span-full"
+    x-show="tab === 'forget_password'"
+    x-transition:enter="transition ease-out duration-500"
+    x-transition:enter-start="transform -translate-x-full"
+    x-transition:enter-end="transform"
+  >
+    <%= live_component(
+          @socket,
+          UserFormComponent,
+          fields: [:email],
+          required_fields: [:email],
+          changeset: @changeset,
+          button_text:  gettext("Send Email"),
+          live_action: :password_recovery,
+          handle_events: [phx_change: :validate, phx_submit: :password_recovery],
+          id_prefix: "password_recovery",
+          mobile: true
+        )
+    %>
+  </li>
+  <div class="flex bg-rose-100 dark:bg-midnight-500 rounded-2xl col-span-full p-6">
+    <div class="p-2">
+      <p class="flex items-center text-rose-600 text-sm mb-2">
+        <span class="w-4 h-4 mr-2 inline-flex items-center justify-center bg-rose-600 text-white rounded-full flex-shrink-0">
+          <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" class="w-3 h-3" viewBox="0 0 24 24">
+            <path d="M20 6L9 17l-5-5"></path>
+          </svg>
+        </span>Membership Perks
+      </p>
+      <p class="flex items-center text-rose-600 text-sm mb-2">
+        <span class="w-4 h-4 mr-2 inline-flex items-center justify-center bg-rose-600 text-white rounded-full flex-shrink-0">
+          <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" class="w-3 h-3" viewBox="0 0 24 24">
+            <path d="M20 6L9 17l-5-5"></path>
+          </svg>
+        </span>Order History
+      </p>
+      <p class="flex items-center text-rose-600 text-sm mb-2">
+        <span class="w-4 h-4 mr-2 inline-flex items-center justify-center bg-rose-600 text-white rounded-full flex-shrink-0">
+          <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" class="w-3 h-3" viewBox="0 0 24 24">
+            <path d="M20 6L9 17l-5-5"></path>
+          </svg>
+        </span>Favorites Products
+      </p>
+      <p class="flex items-center text-rose-600 text-sm mb-2">
+        <span class="w-4 h-4 mr-2 inline-flex items-center justify-center bg-rose-600 text-white rounded-full flex-shrink-0">
+          <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" class="w-3 h-3" viewBox="0 0 24 24">
+            <path d="M20 6L9 17l-5-5"></path>
+          </svg>
+        </span>Special For You
+      </p>
+      <p class="flex items-center text-rose-600 text-sm mb-2">
+        <span class="w-4 h-4 mr-2 inline-flex items-center justify-center bg-rose-600 text-white rounded-full flex-shrink-0">
+          <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" class="w-3 h-3" viewBox="0 0 24 24">
+            <path d="M20 6L9 17l-5-5"></path>
+          </svg>
+        </span>Quick Checkout
+      </p>
+    </div>
+  </div>
+</ul>

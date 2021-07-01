@@ -1,0 +1,276 @@
+<div style="margin: 0;">
+  <table class="light-img" style="max-width:600px; width: calc(100% - 20px); margin-top: 40px; padding-left: 20px;">
+    <tr>
+      <td>
+        <a href="#" target="_blank" style="cursor: pointer;">
+          <img src="<%= full_path() <> "/uploads/email_images/logo.jpg" %>" alt="logo" style="display: block; margin: 0 0 60px 20px; width: 50px;"/>
+        </a>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <table cellpadding="0" cellspacing="0" style="border-spacing: 0; padding-left: 20px;">
+          <tr>
+            <td>
+              <img src="<%= full_path() <> "/uploads/email_images/smile.svg" %>" alt="smile" style="display: block; width: 27px;"/>
+            </td>
+            <td style="padding-left: 12px; vertical-align: bottom;">
+              <h3 style="font-size: 20px; margin: 0;">
+                <b>Order № <%= @order.id %> failed.</b>
+              </h3>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+    <tr>
+      <td style="padding: 26px 0 12px 20px;">
+        <p style="font-size: 16px; line-height: 120%; margin: 0;">
+         Thank you for placing your order  <br/>
+          in our store <b>InBeauty.</b>
+        </p>
+      </td>
+      <tr>
+        <td style="padding: 0 0 82px 20px;">
+          <p style="font-size: 12px; margin: 0; line-height: 150%; color: #888888;"> The order is accepted for processing.</p>
+        </td>
+      </tr>
+    </tr>
+    <tr>
+      <td>
+        <h4 style="margin: 0 0 18px 20px;">Order list</h4>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <table
+          style="
+            width: 100%;
+            max-width: 560px;
+            background-color: #E5E5E5;
+            border-radius: 10px;
+            padding: 26px 20px;
+            margin: 0 0 20px;"
+        >
+          <tr style="font-size: 10px;">
+            <td>
+              <table cellpadding="0" cellspacing="0" style="border-spacing: 0; width: 100%; border-collapse: collapse;">
+                <tr>
+                  <td style="padding-bottom: 12px; font-size: 10px;">
+                    <span style="color: #888888;">Order date:</span><%= @order.inserted_at %>
+                  </td>
+                  <td style="padding-bottom: 12px; font-size: 10px;">
+                    <span style="color: #888888;">Order number:</span> <%= @order.id%>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <table style="width: 100%; border-top: 1px solid #D6DBCF; padding: 24px 0 21px;">
+                <%= for product <- @order.products do %>
+                  <tr style="font-size: 14px; font-weight: 500; line-height: 120%;">
+                    <td>
+                      <img src= <%= full_path() <> product.image_path %> alt="Product" style="display: block; width: 52px;"/>
+                    </td>
+                    <td>
+                      <%= product.name %>
+                    </td>
+                    <td>
+                      <%= product.order_quantity %>
+                    </td>
+                    <td style="width: 57px; text-align: end; padding-top: 20px;">
+                      $<%=   product.price * product.order_quantity  %>
+                      <span style="font-size: 10px; color: #888888;"> $<%=   product.price %> per one </span>
+                    </td>
+                  </tr>
+                <% end %>
+              </table>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <table cellpadding="0" cellspacing="0" style="width: 100%; padding-top: 26px; border-top: 1px solid #D6DBCF;">
+                <tr>
+                  <td style="font-size: 12px; line-height: 120%; padding-bottom: 10px; color: #888888;">
+                   </td>
+                </tr>
+                <tr>
+            <td style="font-size: 12px; line-height: 120%; padding-bottom: 10px; color: #888888;"> Recipient: <%= @order.first_name %> <%= @order.last_name %></td>
+                </tr>
+                <tr>
+                  <td style="font-size: 12px; line-height: 120%; padding-bottom: 10px; color: #888888;">Phone number: <%= @order.phone_number %></td>
+                  <td>
+                    <td style="font-size: 12px; text-align: end; line-height: 120%;">Total:</td>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="font-size: 12px; line-height: 120%; color: #888888;">Payment:
+                    <%= @order.paid %>
+                  </td>
+                  <td>
+                    <td style="font-size: 12px; text-align: end; line-height: 120%; font-weight: 500;">Total price:</td>
+                    <td style="font-size: 12px; text-align: end; line-height: 150%; font-weight: bold;">$<%=   @order.total_price %></td>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+    <tr>
+      <td style="color: #888888; padding-bottom: 77px;">
+        <p style="margin: 0 0 0 20px; width: calc(100% - 40px);">
+        Oder details <a href = "
+          <%= case Application.get_env(:in_beauty, :env) do
+                :prod ->
+                  "https://in_beauty.com/sessions/new"
+                _ ->
+                  "http://localhost:4000/sessions/new"
+              end
+            %> "
+          target="_blank" style="cursor: pointer; color: #636363; font-weight: 500;">in account</a>
+        </p>
+      </td>
+    </tr>
+  </table>
+
+  <table  class="dark-img" style="max-width:600px; width: calc(100% - 20px); margin-top: 40px; padding-left: 20px; ">
+    <tr>
+      <td>
+        <a href="#" target="_blank" style="cursor: pointer;">
+          <img src="<%= full_path() <> "/uploads/email_images/dark-logo.jpg" %>" alt="logo" style="display: block; margin: 0 0 60px 20px; width: 50px;"/>
+        </a>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <table cellpadding="0" cellspacing="0" style="border-spacing: 0; padding-left: 20px;">
+          <tr>
+            <td>
+              <img src="<%= full_path() <> "/uploads/email_images/dark-smile.svg" %>" alt="smile" style="display: block; width: 27px;"/>
+            </td>
+            <td style="padding-left: 12px; vertical-align: bottom;">
+              <h3 style="font-size: 20px; margin: 0;">
+                <b>Order № <%= @order.id%> failed.</b>
+              </h3>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+    <tr>
+      <td style="padding: 26px 0 12px 20px;">
+        <p style="font-size: 16px; line-height: 120%; margin: 0;">
+         Thank you for placing your order  <br/>
+          in our store <b>InBeauty.</b>
+        </p>
+      </td>
+      <tr>
+        <td style="padding: 0 0 82px 20px;">
+          <p style="font-size: 12px; margin: 0; line-height: 150%; color: #888888;"> The order is accepted for processing.</p>
+        </td>
+      </tr>
+    </tr>
+    <tr>
+      <td>
+        <h4 style="margin: 0 0 18px 20px;">Order list</h4>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <table
+          style="
+            width: 100%;
+            max-width: 560px;
+            background-color: #393838;
+            border-radius: 10px;
+            padding: 26px 20px;
+            margin: 0 0 20px;"
+        >
+          <tr style="font-size: 10px;">
+            <td>
+              <table cellpadding="0" cellspacing="0" style="border-spacing: 0; width: 100%; border-collapse: collapse;">
+                <tr>
+                  <td style="padding-bottom: 12px;">
+                    <span style="color: #c1c1c1;">Order date:</span><%= @order.inserted_at %>
+                  </td>
+                  <td style="padding-bottom: 12px;">
+                    <span style="color: #c1c1c1;">Order number:</span> <%= @order.id%>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <table style="width: 100%; border-top: 1px solid #D6DBCF; padding: 24px 0 21px;">
+                <%= for product <- @order.products do %>
+                  <tr style="font-size: 14px; font-weight: 500; line-height: 120%;">
+                    <td>
+                      <img src= <%= full_path() <> product.image_path %> alt="Product" style="display: block; width: 52px;"/>
+                    </td>
+                    <td>
+                      <%= product.name %>
+                    </td>
+                    <td>
+                      <%= product.order_quantity %>
+                    </td>
+                    <td style="width: 57px; text-align: end; padding-top: 20px;">
+                      <%=   product.price * product.order_quantity  %> $
+                      <span style="font-size: 10px; color: #c1c1c1;"> $<%=   product.price %> per one </span>
+                    </td>
+                  </tr>
+                <% end %>
+              </table>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <table cellpadding="0" cellspacing="0" style="width: 100%; padding-top: 26px; border-top: 1px solid #D6DBCF;">
+                <tr>
+                  <td style="font-size: 12px; line-height: 120%; padding-bottom: 10px; color: #c1c1c1;">
+                   </td>
+                </tr>
+            <td style="font-size: 12px; line-height: 120%; padding-bottom: 10px; color: #c1c1c1;">Recipient: <%= @order.first_name %> <%= @order.last_name %></td>
+                </tr>
+                <tr>
+                  <td style="font-size: 12px; line-height: 120%; padding-bottom: 10px; color: #c1c1c1;">Phone number: <%= @order.phone_number %></td>
+                  <td>
+                    <td style="font-size: 12px; text-align: end; line-height: 120%;">Total:</td>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="font-size: 12px; line-height: 120%; color: #c1c1c1;">Payment:
+                    <%= @order.paid %>
+                  </td>
+                  <td>
+                    <td style="font-size: 12px; text-align: end; line-height: 120%; font-weight: 500;">Total:</td>
+                    <td style="font-size: 12px; text-align: end; line-height: 150%; font-weight: bold;">$<%=   @order.total_price %></td>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+    <tr>
+      <td style="color: ##c1c1c1; padding-bottom: 77px;">
+        <p style="margin: 0 0 0 20px; width: calc(100% - 40px);">
+        Oder details <a href = "
+          <%= case Application.get_env(:in_beauty, :env) do
+                :prod ->
+                  "https://elevgrow.com/sign-in"
+                _ ->
+                  "http://localhost:4000/sessions/new"
+              end
+            %> "
+          target="_blank" style="cursor: pointer; color: #636363; font-weight: 500;">in account</a>
+        </p>
+      </td>
+    </tr>
+  </table>
+</div>

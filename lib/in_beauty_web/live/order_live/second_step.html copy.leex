@@ -1,0 +1,505 @@
+<div class="flex flex-col xl:flex-row p-2 md:p-4">
+
+  <div class="grid grid-cols-7 gap-4 w-full h-1/2">
+    <!-- Price -->
+    <div class="col-span-3 w-full max-w-2xl flex justify-around items-center h-60 cursor-pointer bg-rose-100 rounded-2xl p-6">
+      <div class="flex justify-center">
+        <div class="flex flex-col">
+          <p class=" ml-8 text-lg uppercase text-denim-300 flex font-bold mb-2">
+            <%= gettext("total price") %>:
+          </p>
+          <div class="flex">
+            <p class="block text-5xl mr-1 mt-1 text-pink-dark-dribble">
+              ₽
+            </p>
+            <p class="text-7xl text-gray-700 font-semibold">
+              <%= @order.total_price |> split_flaot() |> List.first %>
+            </p>
+            <p class="text-7xl text-rose-200 font-semibold">
+              .<%= @order.total_price |> split_flaot() |> List.last %>
+            </p>
+          </div>
+          <p class="w-max ml-8 flex items-center text-lg text-gray-700 font-semibold mt-2 px-2 py-1 bg-orange-100 text-orange-400 rounded-2xl">
+            - <%= @order.discount %>% discount
+          </p>
+        </div>
+      </div>
+      <div class="h-full flex flex-col items-center justify-around">
+        <div class="flex flex-col justify-center">
+          <p class="text-md text-denim-300 flex font-bold mb-2">
+            <%= gettext("delivery price") %>:
+          </p>
+          <div class="flex">
+            <p class="block text-3xl mr-1 text-pink-dark-dribble">
+              ₽
+            </p>
+            <p class="text-3xl text-gray-700 font-semibold">
+              <%= @order.delivery.price |> split_flaot() |> List.first %>
+            </p>
+            <p class="text-3xl text-rose-200 font-semibold">
+              .<%= @order.delivery.price |> split_flaot() |> List.last %>
+            </p>
+          </div>
+        </div>
+        <div class="flex flex-col justify-center">
+          <p class="text-md text-denim-300 flex font-bold mb-2">
+            <%= gettext("product price") %>:
+          </p>
+          <div class="flex">
+            <p class="block text-3xl mr-1 text-pink-dark-dribble">
+              ₽
+            </p>
+            <p class="text-3xl text-gray-700 font-semibold">
+              <%= @order.product_price |> split_flaot() |> List.first %>
+            </p>
+            <p class="text-3xl text-rose-200 font-semibold">
+              .<%= @order.product_price |> split_flaot() |> List.last %>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Delivery -->
+    <div class="col-span-3 w-full max-w-lg flex justify-around items-center h-60 cursor-pointer bg-rose-100 rounded-2xl p-6">
+      <div class="flex justify-center">
+        <div class="flex flex-col">
+          <p class="text-lg uppercase text-denim-300 flex font-bold mb-2">
+            <%= gettext("Delivery") %>:
+          </p>
+          <div class="flex">
+            <p class="text-4xl text-gray-700 font-semibold">
+              <%= if @order.delivery.delivery_type in ["sdek_courier", "in_beauty_courier"] do %>
+                  <%= "
+                  #{@order.delivery.street_type && ", " <> @order.delivery.street_type <> "."}
+                  #{@order.delivery.street && @order.delivery.street}
+                  #{@order.delivery.house_type && ", " <> @order.delivery.house_type <> "."}
+                  #{@order.delivery.house && @order.delivery.house}
+                  #{@order.delivery.flat_type && ", " <> @order.delivery.flat_type <> "."}
+                  #{@order.delivery.flat && @order.delivery.flat}
+                " %>
+              <%= else %>
+                  <%= @order.delivery.delivery_point.address %>
+              <% end %>
+            </p>
+            <p class="ml-auto text-4xl text-rose-200 font-semibold">
+              <%= @order.delivery.period_min %>-<%= @order.delivery.period_max %>д
+            </p>
+          </div>
+          <p class="w-96 flex items-center text-lg text-gray-700 font-semibold mt-2 px-2 py-1 text-denim-300 rounded-2xl break-all">
+            <%= if @order.delivery.delivery_type in ["sdek_courier", "in_beauty_courier"] do %>
+                <%= "
+                #{@order.delivery.region_type && @order.delivery.region_type <> ". "}
+                #{@order.delivery.region && @order.delivery.region}
+                #{@order.delivery.area_type && ", " <> @order.delivery.area_type <> ". "}
+                #{@order.delivery.area && @order.delivery.area}
+                #{@order.delivery.city_type && ", " <> @order.delivery.city_type <> "."}
+                #{@order.delivery.city && @order.delivery.city}
+                #{@order.delivery.settlement_type && ", " <> @order.delivery.settlement_type <> "."}
+                #{@order.delivery.settlement && @order.delivery.settlement}
+                #{@order.delivery.street_type && ", " <> @order.delivery.street_type <> "."}
+                #{@order.delivery.street && @order.delivery.street}
+                #{@order.delivery.house_type && ", " <> @order.delivery.house_type <> "."}
+                #{@order.delivery.house && @order.delivery.house}
+                #{@order.delivery.flat_type && ", " <> @order.delivery.flat_type <> "."}
+                #{@order.delivery.flat && @order.delivery.flat}
+              " %>
+            <%= else %>
+                <%= @order.delivery.delivery_point.address_full %>
+            <% end %>
+          </p>
+        </div>
+      </div>
+    </div>
+    <!-- Order Personal Info -->
+    <div class="col-span-full w-full max-w-4xl flex justify-around items-center h-80 cursor-pointer bg-rose-100 rounded-2xl p-6">
+      <div class="flex justify-center">
+        <div class="flex flex-col">
+          <p class="text-lg uppercase text-denim-300 flex font-bold mb-2">
+            <%= gettext("order number") %>:
+          </p>
+          <div class="flex flex-col">
+            <p class="text-7xl text-gray-700 font-semibold">
+              <%= 1_000_000 %>
+            </p>
+          </div>
+          <p class="w-max flex items-center text-2xl text-gray-700 font-semibold mt-2 px-2  text-denim-300 rounded-2xl break-all">
+            email: <%= @order.email %>
+          </p>
+          <p class="w-max flex items-center text-2xl text-gray-700 font-semibold px-2  text-denim-300 rounded-2xl break-all">
+            tel: <%= parse_phone_number(@order.phone_number) %>
+          </p>
+        </div>
+      </div>
+      <div class="h-full flex flex-col items-center justify-around">
+        <div class="flex flex-col justify-center">
+          <p class="text-md text-denim-300 flex font-bold mb-2">
+            <%= gettext("Info") %>
+          </p>
+          <div class="flex flex-col">
+            <p class="text-3xl text-gray-700 font-semibold">
+              <%= @order.first_name %>
+            </p>
+            <p class="text-3xl text-gray-700 font-semibold">
+              <%= @order.last_name %>
+            </p>
+            <p class="text-3xl text-gray-700 font-semibold">
+              <%= @order.patronymic %>
+            </p>
+          </div>
+        </div>
+        <div class="flex flex-col justify-center">
+          <div class="flex flex-col justify-center mb-2">
+            <p class="text-md text-denim-300 flex font-bold">
+              <%= gettext("status") %>:
+            </p>
+            <p class="text-xl text-gray-700 font-semibold">
+              <%= @order.status %>
+            </p>
+          </div>
+
+          <div class="flex flex-col justify-center">
+            <p class="text-md text-denim-300 flex font-bold">
+              <%= gettext("created") %>:
+            </p>
+            <p class="text-xl text-gray-700 font-semibold">
+              <%= @order.inserted_at %>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="flex flex-col justify-between">
+    <!-- Payment Methods -->
+    <div class="w-full md:max-w-3xl grid md:grid-cols-2 gap-4 mb-auto">
+      <p class="col-span-full text-center text-main-pink text-xl font-bold">Способ Оплаты</p>
+      <!-- Cash Mthod -->
+      <div class="w-full h-36 text-center mb-4 cursor-pointer">
+        <div
+      <%= if @allow_cash? do %>
+          class="bg-rose-100 w-full h-full rounded-2xl flex items-center justify-around text-pink-dark-dribble"
+          phx-click="save"
+      <%= else %>
+      class="bg-gray-300 w-full h-full rounded-2xl flex items-center justify-around text-gray-200"
+      <% end %>
+                >
+          <div class="flex">
+            <div
+                x-data
+                :class="{'text-gray-700': <%= @allow_cash? %>}"
+              >
+              <%= InBeautyWeb.IconView.render(InBeautyWeb.IconView, "cash.html") %>
+            </div>
+            <div class="ml-4">
+              <p class="text-md uppercase flex font-bold">
+                <%= gettext("payment") %>:
+              </p>
+              <p class="flex items-center justify-center text-2xl font-semibold leading-tight mr-4"
+                x-data
+                :class="{'text-gray-700': <%= @allow_cash? %>}"
+                >
+                <%= gettext("Cash") %>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Card Mthod -->
+      <div class="w-full h-36 text-center mb-4 cursor-pointer">
+        <div
+                class="bg-rose-100 w-full h-full rounded-2xl flex items-center justify-around"
+                phx-click="change_delivery_type"
+                phx-value-type="in_beauty_pickup"
+              >
+          <div class="flex">
+            <div class="w-12 h-12">
+              <%= InBeautyWeb.IconView.render(InBeautyWeb.IconView, "card.html") %>
+            </div>
+            <div class="ml-4">
+              <p class="text-md uppercase text-pink-dark-dribble flex font-bold">
+                <%= gettext("payment") %>:
+              </p>
+              <p class="flex items-center justify-center text-2xl text-gray-700 font-semibold leading-tight mr-4">
+                <%= gettext("Card") %>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Order info -->
+    <ol class="w-full md:max-w-3xl flex flex-col dark:text-rose-100 bg-rose-100 dark:bg-midnight-500 rounded-2xl p-4 2xl:p-6">
+      <li class="flex justify-between mb-2 text-2xl">
+        <p class="flex-1 text-center font-bold">
+          Order
+        </p>
+      </li>
+      <li class="flex justify-between mb-2 text-xl">
+        <p>
+          Order Number:
+        </p>
+        <p class="font-bold w-full max-w-md text-right ">
+          <%= @order.id %>
+        </p>
+      </li>
+      <li class="flex justify-between mb-2 text-xl">
+        <p>
+          Date Created:
+        </p>
+        <p class="font-bold w-full max-w-md text-right ">
+          <%= @order.inserted_at %>
+        </p>
+      </li>
+      <li class="flex justify-between mb-2 text-xl">
+        <p>
+          Status:
+        </p>
+        <p class="font-bold w-full max-w-md text-right ">
+          <%= @order.status %>
+        </p>
+      </li>
+      <li class="flex justify-between mb-2 text-xl">
+        <p>
+          First Name:
+        </p>
+        <p class="font-bold w-full max-w-md text-right ">
+          <%= @order.first_name %>
+        </p>
+      </li>
+      <li class="flex justify-between mb-2 text-xl">
+        <p>
+          Last name:
+        </p>
+        <p class="font-bold w-full max-w-md text-right ">
+          <%= @order.last_name %>
+        </p>
+      </li>
+      <li class="flex justify-between mb-2 text-xl">
+        <p>
+          Patronymic:
+        </p>
+        <p class="font-bold w-full max-w-md text-right ">
+          <%= @order.patronymic || "-" %>
+        </p>
+      </li>
+      <li class="flex justify-between mb-2 text-xl">
+        <p>
+          Email:
+        </p>
+        <p class="font-bold w-full max-w-md text-right ">
+          <%= @order.email %>
+        </p>
+      </li>
+      <li class="flex justify-between mb-2 text-xl">
+        <p>
+          Phone Number:
+        </p>
+        <p class="font-bold w-full max-w-md text-right ">
+          <%= @order.phone_number %>
+        </p>
+      </li>
+      <li class="flex justify-between mb-2 text-xl">
+        <p>
+          Paid:
+        </p>
+        <p class="font-bold w-full max-w-md text-right ">
+          <%= @order.paid %>
+        </p>
+      </li>
+    </ol>
+    <!-- Delivery info -->
+    <ol class="w-full md:max-w-3xl flex flex-col dark:text-rose-100 bg-rose-100 dark:bg-midnight-500 rounded-2xl p-4 2xl:p-6 mt-4">
+      <li class="flex justify-between mb-2 text-2xl">
+        <p class="flex-1 text-center font-bold">
+          Order Delivery
+        </p>
+      </li>
+      <li class="flex justify-between mb-2 text-xl">
+        <p>
+          Type:
+        </p>
+        <p class="font-bold w-full max-w-md text-right ">
+          <%= @order.delivery.delivery_type %>
+        </p>
+      </li>
+      <li class="flex justify-between mb-2 text-xl">
+        <p>
+          Delivery Adress:
+        </p>
+        <%= if @order.delivery.delivery_type in ["sdek_courier", "in_beauty_courier"] do %>
+          <p class="font-bold w-full max-w-md text-right ">
+            <%= "
+            #{@order.delivery.region_type && @order.delivery.region_type <> ". "}
+            #{@order.delivery.region && @order.delivery.region}
+            #{@order.delivery.area_type && ", " <> @order.delivery.area_type <> ". "}
+            #{@order.delivery.area && @order.delivery.area}
+            #{@order.delivery.city_type && ", " <> @order.delivery.city_type <> "."}
+            #{@order.delivery.city && @order.delivery.city}
+            #{@order.delivery.settlement_type && ", " <> @order.delivery.settlement_type <> "."}
+            #{@order.delivery.settlement && @order.delivery.settlement}
+            #{@order.delivery.street_type && ", " <> @order.delivery.street_type <> "."}
+            #{@order.delivery.street && @order.delivery.street}
+            #{@order.delivery.house_type && ", " <> @order.delivery.house_type <> "."}
+            #{@order.delivery.house && @order.delivery.house}
+            #{@order.delivery.flat_type && ", " <> @order.delivery.flat_type <> "."}
+            #{@order.delivery.flat && @order.delivery.flat}
+          " %>
+          </p>
+        <%= else %>
+          <p class="font-bold w-full max-w-md text-right ">
+            <%= @order.delivery.delivery_point.address_full %>
+          </p>
+        <% end %>
+      </li>
+      <li class="flex justify-between mb-2 text-xl">
+        <p>
+          Delivery Price:
+        </p>
+        <p class="font-bold w-full max-w-md text-right ">
+          <%= @order.delivery.price %> P
+        </p>
+      </li>
+      <li class="flex justify-between mb-2 text-xl">
+        <p>
+          Min Days:
+        </p>
+        <p class="font-bold w-full max-w-md text-right ">
+          <%= @order.delivery.period_min %> days
+        </p>
+      </li>
+      <li class="flex justify-between mb-2 text-xl">
+        <p>
+          Max Days:
+        </p>
+        <p class="font-bold w-full max-w-md text-right ">
+          <%= @order.delivery.period_max %> days
+        </p>
+      </li>
+    </ol>
+    <!-- Mooney info -->
+    <ol class="w-full md:max-w-3xl flex flex-col dark:text-rose-100 bg-rose-100 dark:bg-midnight-500 rounded-2xl p-4 2xl:p-6 mt-4">
+      <li class="flex justify-between mb-2 text-2xl">
+        <p class="flex-1 text-center font-bold">
+          Price
+        </p>
+      </li>
+      <li class="flex justify-between mb-2 text-xl">
+        <p>
+          Product Price:
+        </p>
+        <p class="font-bold w-full max-w-md text-right ">
+          <%= @order.product_price %>
+        </p>
+      </li>
+      <li class="flex justify-between mb-2 text-xl">
+        <p>
+          Discount:
+        </p>
+        <p class="font-bold w-full max-w-md text-right ">
+          <%= @order.discount %> %
+        </p>
+      </li>
+      <li class="flex justify-between mb-2 text-xl">
+        <p>
+          Delivery Price:
+        </p>
+        <p class="font-bold w-full max-w-md text-right ">
+          <%= @order.delivery.price %> P
+        </p>
+      </li>
+      <li class="flex justify-between mb-2 text-xl">
+        <p>
+          Total Price:
+        </p>
+        <p class="font-bold w-full max-w-md text-right ">
+          <%= @order.total_price %>
+        </p>
+      </li>
+    </ol>
+    <!-- Order Products -->
+    <div class="flex flex-col w-full mt-4">
+      <%= if @current_cart.stocks_carts == [] do %>
+        #TODO make this beautifull
+        <div class="h-44">Your cart in empty</div>
+      <% else %>
+        <%= for {reserved_stock, i} <- Enum.with_index(@order.reserved_stocks) do %>
+          <%# inspect reserved_stock %>
+          <div class="flex flex-col justify-between p-2 2xl:p-4 mb-4 md:flex-row xl:flex-col 2xl:flex-row rounded-2xl w-full bg-rose-100">
+            <div class="flex">
+              <a href="#" class="w-32 h-32">
+                <img src="<%= reserved_stock.stock.image_path %>" class="w-full h-full object-cover" alt="prod_img">
+              </a>
+              <div class="flex-1 flex flex-col justify-between ml-6 break-all">
+                <p class="2xl:ml-4 text-xl">some Interesting name of my parfum<%= reserved_stock.stock.product.name %></p>
+                <p class="2xl:ml-4 text-xl"><%= reserved_stock.volume %> <%= gettext("мл")%></p>
+              </div>
+            </div>
+            <div class="flex md:flex-col xl:flex-row 2xl:flex-col justify-between mt-6 2xl:mt-0 2xl:ml-12">
+              <div class="flex items-center w-max mt-1 rounded-2xl">
+                <p class="text-gray-700 text-lg w-12 text-center"><%= reserved_stock.quantity %></p>
+                <p><%= gettext("шт") %></p>
+              </div>
+              <p class="text-2xl font-medium text-right mr-4">
+                $<%= reserved_stock.stock.price %>
+              </p>
+            </div>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+from old  new.html.leex
+
+
+
+  <div class="flex flex-col justify-between mt-12 md:px-4">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 justify-items-stretch w-full md:max-w-3xl mt-auto mb-12">
+      <div class="h-36  text-center mb-4 md:mb-0">
+        <div class="bg-rose-100 w-full h-full rounded-2xl flex flex-col items-center justify-center">
+          <h4 class="text-sm uppercase text-gray-500 leading-tight">
+            Price
+          </h4>
+          <h3 class="text-3xl text-gray-700 font-semibold leading-tight my-3">
+            $ <%= @current_cart.total_price %>
+          </h3>
+        </div>
+      </div>
+      <div class="h-36  text-center mb-4 md:mb-0">
+        <div class="bg-rose-100 w-full h-full rounded-2xl flex flex-col items-center justify-center">
+          <h4 class="text-sm uppercase text-gray-500 leading-tight">
+            Discont
+          </h4>
+          <h3 class="text-3xl text-gray-700 font-semibold leading-tight my-3">
+            0%
+          </h3>
+        </div>
+      </div>
+      <div class="h-36  text-center mb-4 md:mb-0">
+        <div class="bg-rose-100 w-full h-full rounded-2xl flex flex-col items-center justify-center">
+          <h4 class="text-sm uppercase text-gray-500 leading-tight">
+            Total Price
+          </h4>
+          <h3 class="text-3xl text-gray-700 font-semibold leading-tight my-3">
+            $ <%= @current_cart.total_price %>
+          </h3>
+        </div>
+      </div>
+    </div>
+    <%= submit class: "h-36  text-center mb-4 md:mb-0 cursor-pointer focus:outline-none", phx_click: "save" do %>
+      <div class="bg-rose-100 w-full h-full rounded-2xl flex items-center justify-center">
+        <p class="flex items-center justify-center text-3xl text-gray-700 font-semibold leading-tight mr-4">
+          <%= gettext("Continue") %>
+        </p>
+        <i>
+          <%= InBeautyWeb.IconView.render(InBeautyWeb.IconView, "arrow-right.html") %>
+        </i>
+      </div>
+    <% end %>
+  </div>

@@ -1,0 +1,255 @@
+    <%= @stock_cart && (for field <- @stock_cart |> Map.from_struct do %>
+  <div><%= inspect field %></div>
+<% end) %>
+<%= if @live_action == :image do %>
+  <div class="fixed inset-0 z-50 w-full h-full bg-white overflow-hidden">
+    <img class="w-60v lg:w-full h-full lg:max-h-152 rounded-2xl object-contain mx-auto p-16" src="<%= "/uploads/1.png" %>" alt="Nike Air">
+  </div>
+<%= end %>
+<article class="mx-auto flex flex-col lg:flex-row mt-8  lg:p-16 relative <%=if @live_action == :image, do: "hidden" %>">
+  <%= live_patch to: Routes.product_show_path(@socket, :image, @product, "/uploads/1.png"), class: "w-full lg:w-3/5 bg-gradient-to-r from-gray-200 to-gray-50 lg:rounded-3xl" do %>
+    <img class="w-60v lg:w-full h-full lg:max-h-152 rounded-2xl object-contain mx-auto p-16" src="/uploads/1.png" alt="Nike Air">
+  <% end %>
+  <div class="w-full mx-auto mt-5 px-1 xs:px-2 sm:px-6 lg:px-0 lg:ml-8 lg:mt-0 lg:w-2/5">
+    <h1 class="text-gray-700 bg-rose-100 rounded-2xl px-4 py-8 uppercase text-3xl xl:text-5xl text-center font-bold tracking-widest break-all">
+    <%= @product.name %>
+
+    Guerlain Aqua Allegoria Pera Granita
+
+    </h1>
+    <section class="mt-8" id="stocks_info">
+      <p class="text-lg my-4"> <%= gettext("Volume") %> / <%= gettext("ml") %></p>
+      <ul class="flex">
+        <%= for stock <- @product.stocks  do %>
+          <li
+            phx-click="select_stock"
+            phx-throttle="1000"
+            phx-value-id="<%= stock.id %>"
+            class="
+              flex
+              items-center
+              justify-center
+              rounded-full
+              h-20
+              w-20
+              text-2xl
+              text-midnight-500
+              mx-2
+              cursor-pointer
+              relative
+              <%= if @selected_stock.id == stock.id, do: "bg-rose-300" %>
+              <%= if @selected_stock.quantity < 1, do: "pointer-events-none" %>
+            "
+          >
+            <svg
+              class="
+                absolute
+                text-rose-200 opacity-50
+                <%= if !(@selected_stock.quantity < 1), do: "hidden" %>
+              "
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+            <%= stock.volume %>
+          </li>
+        <% end %>
+      </ul>
+      <div class="flex flex-col">
+        <p class="text-3xl text-midnight-500 mt-8 tracking-widest">
+          <%= @selected_stock.price %> &#8381;
+        </p>
+        <hr class="my-3">
+      </div>
+      <p class="p-2 text-xl">In Cart: <strong class="p-2 text-2xl ml-2"><%= @stock_cart &&  @stock_cart.quantity || 0 %></strong> </p>
+      <div class="flex items-center mt-6">
+
+          <button
+          <%= if @stock_cart do  %>
+            phx-click="add_more"
+          <% else %>
+            phx-click="add_to_cart"
+          <% end %>
+            phx-throttle="500"
+            class="px-16 py-4 bg-midnight-500 text-white text-lg xs:text-xl sm:text-2xl hover:text-rose-300 rounded-2xl"
+          >
+            <%= if @stock_cart, do: "Add More", else: "Add To Cart" %>
+          </button>
+
+        <%= if @favorite do %>
+          <button
+            class="ml-4 xs:ml-6 rounded-full p-4 bg-transparent"
+            phx-click="remove_from_favorite"
+            phx-throttle="1000"
+            >
+            <svg class="h-8 w-8 text-rose-500"xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd" />
+            </svg>
+          </button>
+        <% else %>
+          <button
+            class="group bg-midnight-500 ml-4 xs:ml-6 rounded-full p-4 hover:bg-transparent"
+            phx-click="add_to_favorite"
+            phx-throttle="1000"
+          >
+            <svg class="h-8 w-8 text-white group-hover:text-rose-500"xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd" />
+            </svg>
+          </button>
+        <% end %>
+      </div>
+    </section>
+  </div>
+</article>
+
+<!-- desktop version -->
+<ul
+  class="hidden lg:grid grid-cols-3 gap-8 2xl:gap-12 mt-12 dark:text-rose-100 px-2 lg:px-16"
+  x-data="{ tab: 'description' }"
+>
+  <li
+    class="col-span-1 row-span-1 rounded-2xl p-6  2xl:p-8 h-48 shadow-2xl"
+    @click="tab = 'description'"
+    :class="{
+      'bg-rose-300': tab === 'description',
+      'bg-rose-100': tab !== 'description',
+      'dark:bg-rose-100': tab === 'description',
+      'dark:bg-midnight-500': tab !== 'description'
+    }"
+  >
+    <p
+      class="flex items-center justify-center w-full h-full text-3xl font-extrabold xl:text-3xl text-main-pink dark:text-rose-100"
+      :class="{ 'dark:text-main-pink': tab === 'description' }"
+    >
+      <%= gettext "description" %>
+    </p>
+  </li>
+  <li
+    class="col-span-1 row-start-2 rounded-2xl p-6  2xl:p-8 h-48 shadow-2xl"
+    @click="tab = 'info'"
+    :class="{
+      'bg-rose-300': tab === 'info',
+      'bg-rose-100': tab !== 'info',
+      'dark:bg-rose-100': tab === 'info',
+      'dark:bg-midnight-500': tab !== 'info'
+    }"
+  >
+    <p
+      class="flex items-center justify-center w-full h-full text-3xl font-extrabold xl:text-3xl text-main-pink dark:text-rose-100"
+      :class="{ 'dark:text-main-pink': tab === 'info' }"
+    >
+      <%= gettext "Info" %>
+    </p>
+  </li>
+  <li
+    class="md:w-full p-6  2xl:p-8 bg-rose-50 dark:bg-midnight-500 rounded-2xl row-span-3 col-span-2"
+    x-show="tab === 'info'"
+    x-transition:enter="transition ease-out duration-500"
+    x-transition:enter-start="transform -translate-y-1/2"
+    x-transition:enter-end="transform"
+  >
+    <div class="flex-1 w-full px-6 2xl:p-8">
+      <p class="text-2xl mb-4"> <%= gettext("Detailed characteristics") %> </p>
+      <ul class="grid grid-cols-2 text-lg">
+        <li><%= gettext("for who") %></li>
+        <li><%= @product.gender %></li>
+        <li><%= gettext("manufacturer") %></li>
+        <li><%= @product.manufacturer %></li>
+        <li><%= gettext("hight level") %></li>
+        <li><%= @product.manufacturer %></li>
+        <li><%= gettext("middle level") %></li>
+        <li><%= @product.manufacturer %></li>
+        <li><%= gettext("base level") %></li>
+        <li><%= @product.manufacturer %></li>
+      </ul>
+    </div>
+  </li>
+  <li
+    class="bg-rose-50 dark:bg-midnight-500 rounded-2xl row-span-3 col-span-2 md:w-full p-6  2xl:p-8"
+    x-show="tab === 'description'"
+    x-transition:enter="transition ease-out duration-500"
+    x-transition:enter-start="transform -translate-y-1/2"
+    x-transition:enter-end="transform"
+  >
+    <p class="text-xl mb-4"> <%= @product.name %></p>
+    Блистательный дуэт новых ароматов BOSS The Scent Pure Accord представляет собой новый взгляд на соблазнение, в котором мужчина и женщина BOSS участвуют в чувственной игре равных. Становясь ближе, чем когда бы то ни было, мужчина и женщина BOSS делят нежность и тайну, отраженные яркими и чувственными нотами двух ароматов туалетной воды BOSS The Scent Pure Accord. Туалетная вода для мужчин BOSS The Scent Pure Accord открывается живительной нотой имбиря, плавно переходящей в сердечную ноту экзотического фрукта манинка. Уникальная базовая нота чувственной белой замши переносит туалетную воду на совершенно новый ольфакторный уровень, создавая идеальный баланс тепла и света. Флакон из прозрачного стекла с металлической окантовкой граней, увенчанный соответствующим металлическим колпачком, заключает в себе светлый нектар цвета шампанского. Телесно-бежевая коробочка с темно-серыми и серебряными элементами олицетворяет непринужденную мужественность аромата.
+    <p><%= @product.description %> </p>
+  </li>
+</ul>
+<!-- mobile version -->
+<ul
+  class="grid lg:hidden grid-cols-6 gap-2 xs:gap-4 mt-4 xs:mt-8 dark:text-rose-100 px-2"
+  x-data="{ tab: 'description' }"
+>
+  <li
+    class="col-span-3 rounded-2xl p-3 xs:p-6"
+    @click="tab = 'description'"
+    :class="{
+      'bg-rose-300': tab === 'description',
+      'bg-rose-100': tab !== 'description',
+      'dark:bg-rose-100': tab === 'description',
+      'dark:bg-midnight-500': tab !== 'description'
+    }"
+  >
+    <p
+      class="text-center text-xl xs:text-2xl sm:text-3xl font-extrabold text-main-pink dark:text-rose-100"
+      :class="{ 'dark:text-main-pink': tab === 'description' }"
+    >
+      <%= gettext "description" %>
+    </p>
+  </li>
+  <li
+    class="col-span-3 rounded-2xl p-3 xs:p-6"
+    @click="tab = 'info'"
+    :class="{
+      'bg-rose-300': tab === 'info',
+      'bg-rose-100': tab !== 'info',
+      'dark:bg-rose-100': tab === 'info',
+      'dark:bg-midnight-500': tab !== 'info'
+    }"
+  >
+    <p
+      class="text-center text-xl xs:text-2xl sm:text-3xl font-extrabold text-main-pink dark:text-rose-100"
+      :class="{ 'dark:text-main-pink': tab === 'info' }"
+    >
+      <%= gettext "info" %>
+    </p>
+  </li>
+  <li
+    class="flex flex-col items-center bg-rose-100 dark:bg-midnight-500 rounded-2xl p-3 xs:p-6 col-span-full"
+    x-show="tab === 'info'"
+    x-transition:enter="transition ease-out duration-500"
+    x-transition:enter-start="transform -translate-x-full"
+    x-transition:enter-end="transform"
+  >
+    <div class="flex-1 w-full">
+      <p class="text-2xl mb-4"> <%= gettext("Detailed characteristics") %> </p>
+      <ul class="grid grid-cols-2 text-lg">
+        <li><%= gettext("for who") %></li>
+        <li><%= @product.gender %></li>
+        <li><%= gettext("manufacturer") %></li>
+        <li><%= @product.manufacturer %></li>
+        <li><%= gettext("hight level") %></li>
+        <li><%= @product.manufacturer %></li>
+        <li><%= gettext("middle level") %></li>
+        <li><%= @product.manufacturer %></li>
+        <li><%= gettext("base level") %></li>
+        <li><%= @product.manufacturer %></li>
+      </ul>
+    </div>
+  </li>
+  <li
+    class="bg-rose-100 dark:bg-midnight-500 rounded-2xl w-full p-6 col-span-full"
+    x-show="tab === 'description'"
+    x-transition:enter="transition ease-out duration-500"
+    x-transition:enter-start="transform -translate-x-full"
+    x-transition:enter-end="transform"
+  >
+    <p class="text-xl mb-4"> <%= @product.name %></p>
+    Блистательный дуэт новых ароматов BOSS The Scent Pure Accord представляет собой новый взгляд на соблазнение, в котором мужчина и женщина BOSS участвуют в чувственной игре равных. Становясь ближе, чем когда бы то ни было, мужчина и женщина BOSS делят нежность и тайну, отраженные яркими и чувственными нотами двух ароматов туалетной воды BOSS The Scent Pure Accord. Туалетная вода для мужчин BOSS The Scent Pure Accord открывается живительной нотой имбиря, плавно переходящей в сердечную ноту экзотического фрукта манинка. Уникальная базовая нота чувственной белой замши переносит туалетную воду на совершенно новый ольфакторный уровень, создавая идеальный баланс тепла и света. Флакон из прозрачного стекла с металлической окантовкой граней, увенчанный соответствующим металлическим колпачком, заключает в себе светлый нектар цвета шампанского. Телесно-бежевая коробочка с темно-серыми и серебряными элементами олицетворяет непринужденную мужественность аромата.
+    <p><%= @product.description %> </p>
+  </li>
+</ul>

@@ -1,0 +1,28 @@
+<section class="relative w-max max-w-xs">
+  <div
+    class="flex relative"
+    @click.away="open = false"
+  >
+    <div class="<%= @wrapper_size %> flex items-center justify-center max-w-xs bg-white bg-gradient-to-r dark:from-rose-100 dark:to-rose-300 border-2 border-rose-300 rounded-2xl relative">
+        <%= if @selected_variant not in ["", [], [""]] do %>
+          <p class="px-2 py-1 mx-1 dark:from-rose-200 rounded-2xl text-xl text-center whitespace-nowrap ">
+            <%= @selected_variant %>
+          </p>
+        <% else %>
+          <p class="w-full px-2 py-1 mx-1 text-xl text-center text-gray-500 dark:text-gray-400">
+            <%= @placeholder %>
+          </p>
+        <% end %>
+      <select name="<%= @field %>" phx-debounce="blur" class="absolute h-full w-full z-10 opacity-0">
+        <%= for variant <- @variants do %>
+          <option
+            value="<%= variant %>"
+            <%= if variant == @selected_variant, do: "selected" %>
+          >
+          <%= variant %>
+          </option>
+        <% end %>
+      </select>
+    </div>
+  </div>
+</section>

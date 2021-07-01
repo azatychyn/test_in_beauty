@@ -1,0 +1,401 @@
+  <div x-show="tab === 'delivery'" class="col-span-10 grid md:grid-cols-3 gap-4 mt-12 pr-4 auto-rows-min">
+    <!-- city -->
+    <div class="h-40 col-span-full  text-center cursor-pointer">
+      <%= live_patch(
+              to: Routes.order_new_path( @socket, :search),
+              class: "bg-rose-100 w-full h-full rounded-2xl flex items-center justify-around"
+            )
+      do %>
+        <div class="flex">
+          <%= InBeautyWeb.IconView.render(InBeautyWeb.IconView, "location.html") %>
+          <div class="ml-4">
+            <p class="text-md uppercase text-pink-dark-dribble flex font-bold">
+              <%= @delivery.city_type_full || @delivery.settlement_type_full %>:
+            </p>
+            <p class="flex items-center justify-center text-2xl text-gray-700 font-semibold leading-tight mr-4">
+              <%= @delivery.city || @delivery.settlement %>
+            </p>
+          </div>
+        </div>
+      <% end %>
+    </div>
+    <!-- delivery_type -->
+    <div class="w-full grid grid-cols-1 gap-4 auto-rows-min">
+      <div class="w-full h-20 text-center cursor-pointer">
+        <%= if !@delivery_point.code && (@delivery.delivery_type == :in_beauty_courier) || (@delivery.delivery_type == :in_beauty_courier) do %>
+          <%=
+                  live_patch(
+                    to: Routes.order_new_path( @socket, :courier),
+                    class: "bg-rose-100 w-full h-full rounded-2xl flex items-center justify-end" <> active_delivery_type?(@delivery.delivery_type, :in_beauty_courier)
+                  )
+                do %>
+            <div class="flex items-center">
+              <%= InBeautyWeb.IconView.render(InBeautyWeb.IconView, "truck.html") %>
+              <div class="ml-4">
+                <div class="flex justify-between">
+                  <p class="text-md uppercase text-pink-dark-dribble flex font-bold">
+                    <%= gettext("delivery") %>:
+                  </p>
+                </div>
+                <p class="flex items-center justify-center text-2xl text-gray-700 font-semibold leading-tight mr-4">
+                  <%= gettext("InBeauty Curier") %>
+                </p>
+              </div>
+            </div>
+            <div class="flex items-center justify-center bg-midnight-500 h-full w-24 rounded-l-12xl rounded-r-2xl">
+              <p class="w-10 h-10 text-rose-50">
+                <%= InBeautyWeb.IconView.render(InBeautyWeb.IconView, "edit.html") %>
+              </p>
+            </div>
+          <% end %>
+        <% else %>
+          <div
+            class="bg-rose-100 w-full h-full rounded-2xl flex items-center justify-around <%= active_delivery_type?(@delivery.delivery_type, :in_beauty_courier) %>"
+            phx-click="change_delivery_type"
+            phx-value-type="in_beauty_courier"
+          >
+            <div class="flex">
+              <%= InBeautyWeb.IconView.render(InBeautyWeb.IconView, "truck.html") %>
+              <div class="ml-4">
+                <p class="text-md uppercase text-pink-dark-dribble flex font-bold">
+                  <%= gettext("delivery") %>:
+                </p>
+                <p class="flex items-center justify-center text-2xl text-gray-700 font-semibold leading-tight mr-4">
+                  <%= gettext("InBeauty Curier") %>
+                </p>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+      <div class="w-full h-20  text-center cursor-pointer">
+        <%= if !@delivery_point.code && (@delivery.delivery_type == :sdek_courier) || (@delivery.delivery_type == :sdek_courier) do %>
+          <%=
+                  live_patch(
+                    to: Routes.order_new_path( @socket, :courier),
+                    class: "bg-rose-100 w-full h-full rounded-2xl flex items-center justify-end" <> active_delivery_type?(@delivery.delivery_type, :sdek_courier)
+                  )
+                do %>
+            <div class="flex">
+              <%= InBeautyWeb.IconView.render(InBeautyWeb.IconView, "truck.html") %>
+              <div class="ml-4">
+                <p class="text-md uppercase text-pink-dark-dribble flex font-bold">
+                  <%= gettext("delivery") %>:
+                </p>
+                <p class="flex items-center justify-center text-2xl text-gray-700 font-semibold leading-tight mr-4">
+                  <%= gettext("Sdek Curier") %>
+                </p>
+              </div>
+            </div>
+            <div class="flex items-center justify-center bg-midnight-500 h-full w-24 rounded-l-12xl rounded-r-2xl">
+              <p class="w-10 h-10 text-rose-50">
+                <%= InBeautyWeb.IconView.render(InBeautyWeb.IconView, "edit.html") %>
+              </p>
+            </div>
+          <% end %>
+        <% else %>
+          <div
+                  class="bg-rose-100 w-full h-full rounded-2xl flex items-center justify-around <%= active_delivery_type?(@delivery.delivery_type, :sdek_courier) %>"
+                  phx-click="change_delivery_type"
+                  phx-value-type="sdek_courier"
+                >
+            <div class="flex">
+              <%= InBeautyWeb.IconView.render(InBeautyWeb.IconView, "truck.html") %>
+              <div class="ml-4">
+                <p class="text-md uppercase text-pink-dark-dribble flex font-bold">
+                  <%= gettext("delivery") %>:
+                </p>
+                <p class="flex items-center justify-center text-2xl text-gray-700 font-semibold leading-tight mr-4">
+                  <%= gettext("Sdek Curier") %>
+                </p>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+      <div class="w-full h-20 text-center cursor-pointer">
+        <%= if !@delivery_point.code && (@delivery.delivery_type == :sdek_pickup) || (@delivery.delivery_type == :sdek_pickup) do %>
+          <%=
+                  live_patch(
+                    to: Routes.order_new_path( @socket, :map),
+                    class: "bg-rose-100 w-full h-full rounded-2xl flex items-center justify-end" <> active_delivery_type?(@delivery.delivery_type, :sdek_pickup)
+                  )
+                do %>
+            <div class="flex">
+              <%= InBeautyWeb.IconView.render(InBeautyWeb.IconView, "cube.html") %>
+              <div class="ml-4">
+                <p class="text-md uppercase text-pink-dark-dribble flex font-bold">
+                  <%= gettext("delivery") %>:
+                </p>
+                <p class="flex items-center justify-center text-2xl text-gray-700 font-semibold leading-tight mr-4">
+                  <%= gettext("Sdek Pickup") %>
+                </p>
+              </div>
+            </div>
+            <div class="flex items-center justify-center bg-midnight-500 h-full w-24 rounded-l-12xl rounded-r-2xl">
+              <p class="w-10 h-10 text-rose-50">
+                <%= InBeautyWeb.IconView.render(InBeautyWeb.IconView, "edit.html") %>
+              </p>
+            </div>
+          <% end %>
+        <% else %>
+          <div
+                  class="bg-rose-100 w-full h-full rounded-2xl flex items-center justify-around <%= active_delivery_type?(@delivery.delivery_type, :sdek_pickup) %>"
+                  phx-click="change_delivery_type"
+                  phx-value-type="sdek_pickup"
+                >
+            <div class="flex">
+              <%= InBeautyWeb.IconView.render(InBeautyWeb.IconView, "cube.html") %>
+              <div class="ml-4">
+                <p class="text-md uppercase text-pink-dark-dribble flex font-bold">
+                  <%= gettext("delivery") %>:
+                </p>
+                <p class="flex items-center justify-center text-2xl text-gray-700 font-semibold leading-tight mr-4">
+                  <%= gettext("Sdek Pickup") %>
+                </p>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+      <div class="w-full h-20 text-center cursor-pointer">
+        <div
+          class="bg-rose-100 w-full h-full rounded-2xl flex items-center justify-around <%= active_delivery_type?(@delivery.delivery_type, :in_beauty_pickup) %>"
+          phx-click="change_delivery_type"
+          phx-value-type="in_beauty_pickup"
+        >
+          <div class="flex">
+            <%= InBeautyWeb.IconView.render(InBeautyWeb.IconView, "cube.html") %>
+            <div class="ml-4">
+              <p class="text-md uppercase text-pink-dark-dribble flex font-bold">
+                <%= gettext("delivery") %>:
+              </p>
+              <p class="flex items-center justify-center text-2xl text-gray-700 font-semibold leading-tight mr-4">
+                <%= gettext("InBeauty Pickup") %>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-span-2 grid grid-cols-2 gap-4 auto-cols-min">
+      <%= if @delivery_point && (@delivery.delivery_type == :sdek_pickup) do %>
+        <%# <div class="h-40 col-span-full flex items-center justify-center">
+          <p class="text-center text-main-pink text-xl font-bold">Пункт выдачи заказа</p>
+        </div> %>
+        <div class="w-full h-40 col-span-full text-center cursor-pointer">
+          <div class="bg-rose-100 w-full h-full rounded-2xl flex items-center justify-around">
+            <div class="flex flex-col items-center justify-center">
+              <p class="text-md uppercase text-pink-dark-dribble flex font-bold">
+                <%= "адрес" %>:
+              </p>
+              <p class=" text-xl text-gray-700 font-semibold leading-tight mr-4">
+                <%= @delivery_point.address_full %>
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="w-full h-40 text-center">
+          <div class="bg-rose-100 w-full h-full rounded-2xl flex items-center justify-around">
+            <div class="flex">
+              <%= InBeautyWeb.IconView.render(InBeautyWeb.IconView, "cash.html") %>
+              <div class="ml-4">
+                <p class="text-md uppercase text-pink-dark-dribble flex font-bold">
+                  <%= gettext("cost") %>:
+                </p>
+                <p class="flex items-center justify-center text-2xl text-gray-700 font-semibold leading-tight mr-4">
+                  <%= @delivery_params[136].delivery_sum %> ₽
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="w-full h-40 text-center">
+          <div class="bg-rose-100 w-full h-full rounded-2xl flex items-center justify-around">
+            <div class="flex">
+              <%= InBeautyWeb.IconView.render(InBeautyWeb.IconView, "clock.html") %>
+              <div class="ml-4">
+                <p class="text-md uppercase text-pink-dark-dribble flex font-bold">
+                  <%= gettext("date") %>:
+                </p>
+                <p class="flex items-center justify-center text-2xl text-gray-700 font-semibold leading-tight mr-4">
+                  <%= @delivery_params[136].period_min %> ~ <%= @delivery_params[136].period_max %> д.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% end %>
+      <%= if @delivery_point && (@delivery.delivery_type == :in_beauty_pickup) do %>
+        <%# <div class="h-40 col-span-full flex items-center justify-center">
+          <p class="text-center text-main-pink text-xl font-bold">Пункт выдачи заказа</p>
+        </div> %>
+        <div class="w-full h-40 col-span-full text-center cursor-pointer">
+          <div class="bg-rose-100 w-full h-full rounded-2xl flex items-center justify-around">
+            <div class="flex flex-col items-center justify-center">
+              <p class="text-md uppercase text-pink-dark-dribble flex font-bold">
+                <%= " адрес" %>:
+              </p>
+              <p class=" text-xl text-gray-700 font-semibold leading-tight mr-4">
+                Россия, Ростовская обл., Ростов-на-Дону, пл. Карла Маркса, 9а
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="w-full h-40 text-center">
+          <div class="bg-rose-100 w-full h-full rounded-2xl flex items-center justify-around">
+            <div class="flex">
+              <%= InBeautyWeb.IconView.render(InBeautyWeb.IconView, "cash.html") %>
+              <div class="ml-4">
+                <p class="text-md uppercase text-pink-dark-dribble flex font-bold">
+                  <%= gettext("cost") %>:
+                </p>
+                <p class="flex items-center justify-center text-2xl text-gray-700 font-semibold leading-tight mr-4">
+                  0 ₽
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="w-full h-40  text-center">
+          <div class="bg-rose-100 w-full h-full rounded-2xl flex items-center justify-around">
+            <div class="flex">
+              <%= InBeautyWeb.IconView.render(InBeautyWeb.IconView, "clock.html") %>
+              <div class="ml-4">
+                <p class="text-md uppercase text-pink-dark-dribble flex font-bold">
+                  <%= gettext("date") %>:
+                </p>
+                <p class="flex items-center justify-center text-2xl text-gray-700 font-semibold leading-tight mr-4">
+                  сегодня
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% end %>
+      <%= if @delivery_point && (@delivery.delivery_type == :sdek_courier) do %>
+        <%# <div class="h-40 col-span-full flex items-center justify-center">
+          <p class="text-center text-main-pink text-xl font-bold">Пункт выдачи заказа</p>
+        </div> %>
+        <div class="w-full h-40 col-span-full text-center cursor-pointer">
+          <div class="bg-rose-100 w-full h-full rounded-2xl flex items-center justify-around">
+            <div class="flex flex-col items-center justify-center">
+              <p class="text-md uppercase text-pink-dark-dribble flex font-bold">
+                <%= "адрес" %>:
+              </p>
+              <p class=" text-xl text-gray-700 font-semibold leading-tight mr-4">
+                <%= "
+                          #{@delivery.region_type && @delivery.region_type <> ". "}
+                          #{@delivery.region && @delivery.region}
+                          #{@delivery.area_type && ", " <> @delivery.area_type <> ". "}
+                          #{@delivery.area && @delivery.area}
+                          #{@delivery.city_type && ", " <> @delivery.city_type <> "."}
+                          #{@delivery.city && @delivery.city}
+                          #{@delivery.settlement_type && ", " <> @delivery.settlement_type <> "."}
+                          #{@delivery.settlement && @delivery.settlement}
+                          #{@delivery.street_type && ", " <> @delivery.street_type <> "."}
+                          #{@delivery.street && @delivery.street}
+                          #{@delivery.house_type && ", " <> @delivery.house_type <> "."}
+                          #{@delivery.house && @delivery.house}
+                          #{@delivery.flat_type && ", " <> @delivery.flat_type <> "."}
+                          #{@delivery.flat && @delivery.flat}
+                        " %>
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="w-full h-40  text-center">
+          <div class="bg-rose-100 w-full h-full rounded-2xl flex items-center justify-around">
+            <div class="flex">
+              <%= InBeautyWeb.IconView.render(InBeautyWeb.IconView, "cash.html") %>
+              <div class="ml-4">
+                <p class="text-md uppercase text-pink-dark-dribble flex font-bold">
+                  <%= gettext("cost") %>:
+                </p>
+                <p class="flex items-center justify-center text-2xl text-gray-700 font-semibold leading-tight mr-4">
+                  <%= @delivery_params[137].delivery_sum %> ₽
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="w-full h-40 text-center">
+          <div class="bg-rose-100 w-full h-full rounded-2xl flex items-center justify-around">
+            <div class="flex">
+              <%= InBeautyWeb.IconView.render(InBeautyWeb.IconView, "clock.html") %>
+              <div class="ml-4">
+                <p class="text-md uppercase text-pink-dark-dribble flex font-bold">
+                  <%= gettext("date") %>:
+                </p>
+                <p class="flex items-center justify-center text-2xl text-gray-700 font-semibold leading-tight mr-4">
+                  <%= @delivery_params[137].period_min %> ~ <%= @delivery_params[137].period_max %> д.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% end %>
+      <%= if @delivery_point && (@delivery.delivery_type == :in_beauty_courier) do %>
+        <%# <div class="h-40 col-span-full flex items-center justify-center">
+          <p class="text-center text-main-pink text-xl font-bold">Пункт выдачи заказа</p>
+        </div> %>
+        <div class="w-full h-40 col-span-full text-center cursor-pointer">
+          <div class="bg-rose-100 w-full h-full rounded-2xl flex items-center justify-around">
+            <div class="flex flex-col items-center justify-center">
+              <p class="text-md uppercase text-pink-dark-dribble flex font-bold">
+                <%= "адрес" %>:
+              </p>
+              <p class=" text-xl text-gray-700 font-semibold leading-tight mr-4">
+                <%= "
+                          #{@delivery.region_type && @delivery.region_type <> ". "}
+                          #{@delivery.region && @delivery.region}
+                          #{@delivery.area_type && ", " <> @delivery.area_type <> ". "}
+                          #{@delivery.area && @delivery.area}
+                          #{@delivery.city_type && ", " <> @delivery.city_type <> "."}
+                          #{@delivery.city && @delivery.city}
+                          #{@delivery.settlement_type && ", " <> @delivery.settlement_type <> "."}
+                          #{@delivery.settlement && @delivery.settlement}
+                          #{@delivery.street_type && ", " <> @delivery.street_type <> "."}
+                          #{@delivery.street && @delivery.street}
+                          #{@delivery.house_type && ", " <> @delivery.house_type <> "."}
+                          #{@delivery.house && @delivery.house}
+                          #{@delivery.flat_type && ", " <> @delivery.flat_type <> "."}
+                          #{@delivery.flat && @delivery.flat}
+                        " %>
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="w-full h-40  text-center">
+          <div class="bg-rose-100 w-full h-full rounded-2xl flex items-center justify-around">
+            <div class="flex">
+              <%= InBeautyWeb.IconView.render(InBeautyWeb.IconView, "cash.html") %>
+              <div class="ml-4">
+                <p class="text-md uppercase text-pink-dark-dribble flex font-bold">
+                  <%= gettext("cost") %>:
+                </p>
+                <p class="flex items-center justify-center text-2xl text-gray-700 font-semibold leading-tight mr-4">
+                  210.0 ₽
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="w-full h-40 text-center">
+          <div class="bg-rose-100 w-full h-full rounded-2xl flex items-center justify-around">
+            <div class="flex">
+              <%= InBeautyWeb.IconView.render(InBeautyWeb.IconView, "clock.html") %>
+              <div class="ml-4">
+                <p class="text-md uppercase text-pink-dark-dribble flex font-bold">
+                  <%= gettext("date") %>:
+                </p>
+                <p class="flex items-center justify-center text-2xl text-gray-700 font-semibold leading-tight mr-4">
+                  0 ~ 2 д.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>

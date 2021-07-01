@@ -1,0 +1,78 @@
+
+<%= f = form_for @changeset, "#", [phx_change: :validate, phx_submit: :save, class: "grid grid-cols-1 lg:grid-cols-2 justify-items-end gap-4 xs:mx-auto w-full max-w-2xl lg:max-w-none"] %>
+	<ul class="lg:col-span-2 grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 justify-items-center gap-4 my-4 mx-auto lg:w-full">
+		<%= for s <- inputs_for(f, :stocks) do %>
+			<li class="relative w-80 bg-gradient-to-r from-rose-50 to-rose-100 dark:from-midnight-500 dark:to-midnight-600 dark:text-rose-100 dark:bg-midnight-500 dark:text-rose-100 rounded-2xl p-6 shadow-lg group hover:ring-2 ring-rose-300">
+				<%= hidden_input s, :id %>
+				<a href="#" class="absolute top-0 right-0" phx-click="remove_stock" phx-value-id="<%= s.params["id"] %>"/>
+					<svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+					</svg>
+				</a>
+				<!-- IMAGE UPLOAD ERRORS-->
+				<%= for {_ref, msg}  <- @uploads[:"image_#{s.params["id"] || s.data.id}"].errors do %>
+					<p class="alert alert-danger"> <%= Phoenix.Naming.humanize(msg) %></p>
+				<% end %>
+				<div class="relative w-full h-16 rounded-2xl border-2 border-dashed border-denim-50 bg-white text-gray-400 m-auto">
+					<p class="absolute w-full inset-0 flex items-center justify-center cursor-pointer">
+							<%= gettext "Drag & Drop files here" %>
+					</p>
+					<%= live_file_input @uploads[:"image_#{s.params["id"] || s.data.id}"], class: "cursor-pointer opacity-0 w-full h-full z-10"   %>
+				</div>
+				<!-- IMAGE UPLOAD -->
+				<%= for entry <- @uploads[:"image_#{s.params["id"] || s.data.id}"].entries do %>
+					<section class="flex justify-around mt-6">
+						<div class="flex items-center w-20 relative">
+							<%= live_img_preview(entry, height: 48, class: "ring ring-rose-200 ring-offset-4 rounded-md") %>
+							<a href="#" class="absolute -top-2 -right-2" phx-click="cancel-entry" phx-value-ref="<%= entry.ref %>" phx-value-id="<%= s.params["id"] %>"/>
+								<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+								</svg>
+							</a>
+						</div>
+						<div class="relative flex flex-col justify-center w-full ml-3 overflow-hidden">
+							<p class="text-sm pr-8 truncate"><%= entry.client_name %></p>
+							<p class="absolute top-0 right-0 text-gray-400"><%= entry.progress %>%</p>
+							<progress max="100" value="<%= entry.progress %>" class="h-1 rounded-2xl mt-2 w-full" />
+						</div>
+					</section>
+				<% end %>
+				<!-- // IMAGE UPLOAD -->
+					<section class="grid grid-flow-row grid-cols-3 grid-rows-7 gap-2 mt-4">
+						<%= for field <- [:price, :volume, :quantity] do %>
+							<%= live_component(@socket, InputComponent,
+											field: field,
+											form: s,
+											label: humanize(field),
+											required: true,
+											id_prefix: "product",
+											mobile: ""
+									)
+							%>
+						<% end %>
+					</section>
+			</li>
+		<% end %>
+	</ul>
+	<button
+		type="button"
+		phx-click="add_stock"
+		class="lg:row-start-2 bg-rose-100 dark:bg-midnight-500 rounded-2xl p-12 my-8 lg:my-0 lg:ml-auto mx-auto 400w-80 h-48 shadow-2xl flex items-center justify-center text-3xl xl:text-3xl text-main-pink dark:text-rose-100 font-extrabold"
+	>
+		<%= gettext "Add New Stock" %>
+	</button>
+	<section class="lg:row-start-2 w-full max-w-lg grid grid-flow-row grid-cols-1 grid-rows-7 gap-4 bg-gradient-to-r from-rose-50 to-rose-100 dark:from-midnight-500 dark:to-midnight-600 dark:text-rose-100 dark:bg-midnight-500 p-4 mx-auto rounded-2xl">
+		<%= for field <- @fields do %>
+			<%= live_component(@socket, InputComponent,
+						field: field,
+						form: f,
+						label: humanize(field),
+						required: required?(field, @required_fields),
+						id_prefix: "product",
+						mobile: ""
+					)
+			%>
+		<% end %>
+		<%= submit "Create", phx_disable_with: "Saving...", class: "col-span-1 font-semibold text-white uppercase mx-auto text-xl bg-rose-300 dark:bg-rose-400 hover:bg-denum-200 rounded-2xl px-6 py-2 my-4 focus:outline-none" %>
+	</section>
+</form>

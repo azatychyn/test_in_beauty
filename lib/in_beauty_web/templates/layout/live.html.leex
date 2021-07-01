@@ -1,0 +1,18 @@
+<main role="main">
+  <p class="alert alert-info col-span-full" role="alert"
+    phx-click="lv:clear-flash"
+    phx-value-key="info"><%= live_flash(@flash, :info) %></p>
+  <p class="alert alert-danger col-span-full" role="alert"
+    phx-click="lv:clear-flash"
+    phx-value-key="error"><%= live_flash(@flash, :error) %></p>
+  <%= @inner_content %>
+
+    <%#
+      live_component @socket, InBeautyWeb.CartComponent,
+        [
+          id: :cart,
+          return_to: Routes.product_index_path(@socket, :index),
+          current_cart: @current_cart
+        ]
+    %>
+</main>

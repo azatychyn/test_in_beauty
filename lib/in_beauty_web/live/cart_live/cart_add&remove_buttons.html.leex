@@ -1,0 +1,61 @@
+            <div class="mt-4">
+              <div x-data="{}" class="flex items-center w-max mt-1 rounded-2xl border-4 border-rose-100">
+                  <button
+                    type="button"
+                    phx-click="dec"
+                    phx-throttle="500"
+                    class="hover:text-gray-300 h-full px-4 py-2 text-2xl"
+                    :class="{
+                      'pointer-events-none': <%= @quantity  == 1 %>,
+                      'text-gray-300': <%= @quantity  == 1 %>,
+                      'text-midnight-500': <%= @quantity  != 1 %>,
+                    }"
+                  >
+                    -
+                  </button>
+                  <input
+                    id="StockCartNumberInput"
+                    name="stock_cart[quantity]"
+                    phx-hook="StockCartNumberInput"
+                    data-max_quantity="<%= @selected_stock.quantity %>"
+                    class="text-gray-700 text-lg w-12 text-center"
+                    value="<%= @quantity %>"
+                  >
+                  <button
+                    type="button"
+                    phx-click="inc"
+                    phx-throttle="500"
+                    class="hover:text-gray-300 h-full px-4 py-2 text-2xl"
+                    :class="{
+                      'pointer-events-none': <%= @quantity  == @selected_stock.quantity %>,
+                      'text-gray-300': <%= @quantity  == @selected_stock.quantity %>,
+                      'text-midnight-500': <%= @quantity  != @selected_stock.quantity %>,
+                    }"
+                  >
+                    +
+                  </button>
+              </div>
+            </div>
+
+
+  <%# def handle_event("inc", _, socket) do
+    quantity = socket.assigns.quantity
+    selected_stock = socket.assigns.selected_stock
+
+    if quantity == selected_stock.quantity do
+      {:noreply, socket}
+    else
+      {:noreply, update(socket, :quantity, &(&1 + 1))}
+    end
+  end
+
+  def handle_event("dec", _, socket) do
+    quantity = socket.assigns.quantity
+    selected_stock = socket.assigns.selected_stock
+
+    if quantity == 1 do
+      {:noreply, socket}
+    else
+      {:noreply, update(socket, :quantity, &(&1 - 1))}
+    end
+  end %>

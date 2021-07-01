@@ -1,0 +1,9 @@
+<main role="main" class="w-full md:h-3/5">
+  <p class="alert alert-info col-span-full" role="alert"
+    phx-click="lv:clear-flash"
+    phx-value-key="info"><%= live_flash(@flash, :info) %></p>
+  <p class="alert alert-danger col-span-full" role="alert"
+    phx-click="lv:clear-flash"
+    phx-value-key="error"><%= live_flash(@flash, :error) %></p>
+  <%= @inner_content %>
+</main>

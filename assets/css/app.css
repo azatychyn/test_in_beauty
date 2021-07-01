@@ -1,0 +1,41 @@
+/* This file is for your main application css. */
+@import "../node_modules/nprogress/nprogress.css";
+/* @import '../node_modules/leaflet-geosearch/dist/geosearch.css'; */
+@import "./live_view.css";
+
+@import "./animations.css";
+
+@import "tailwindcss/base";
+
+@import "tailwindcss/components";
+
+@import "tailwindcss/utilities";
+
+.scroll-smooth {
+  scroll-behavior: smooth;
+}
+
+.scroll-snap-none {
+  scroll-snap-type: none;
+}
+.scroll-snap-x {
+  scroll-snap-type: x mandatory;
+}
+.scroll-snap-y {
+  scroll-snap-type: y mandatory;
+}
+.scroll-snap-start {
+  scroll-snap-align: start;
+}
+
+.noUi-connect {
+  @apply bg-rose-100;
+}
+
+.noUi-handle {
+  @apply rounded-xl border border-rose-200;
+}
+
+.noUi-pips-horizontal {
+  @apply h-4;
+}

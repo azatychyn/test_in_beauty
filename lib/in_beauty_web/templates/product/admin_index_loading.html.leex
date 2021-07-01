@@ -1,0 +1,110 @@
+<section>
+	<div style="color: white">loaded_pages: <% inspect @loaded_pages %></div>
+		<h1 class="w-max text-gray-700 dark:text-rose-300 text-2xl font-bold mx-auto pt-6"><%= gettext("All Products") %></h1>
+
+		<!-- filtering -->
+
+		<form class="flex my-12 w-11/12 mx-auto">
+			<div class="w-20 md:w-80 h-20 md:h-28 mr-4 bg-white dark:bg-midnight-500 border-2 border-rose-300 rounded-2xl relative">
+				<%= live_patch gettext("Filters"),
+							to: "#",
+							class: "flex items-center justify-center w-full h-full text-xl text-gray-500 dark:text-gray-400 break-all" %>
+			</div>
+			<div class="w-20 md:w-28 h-20 md:h-28 bg-rose-200 rounded-2xl mr-4"></div>
+			<div class="w-20 md:w-40 h-20 md:h-28 bg-rose-200 rounded-2xl mr-4"></div>
+		</form>
+		<!-- filtering -->
+		<div class="grid grid-cols-12 mx-auto w-full sm:w-11/12 py-3 bg-rose-300 dark:bg-denim-400 rounded-2xl">
+			<p class="col-span-10 lg:col-span-4 text-sm font-bold uppercase text-gray-50 dark:text-gray-300 pl-3">Name</p>
+			<p class="col-span-3 text-sm font-bold uppercase text-gray-50 dark:text-gray-300 hidden lg:block">Gender</p>
+			<p class="col-span-4 text-sm font-bold uppercase text-gray-50 dark:text-gray-300 hidden lg:block">Manufacturer</p>
+			<p class= "text-sm font-bold uppercase text-gray-50 dark:text-gray-300">Actions</p>
+		</div>
+		<section id="<%= "products" %>" class="mx-auto w-full sm:w-11/12" phx-update="append">
+			<div id="load_prev" class="col-span-full text-center py-4 ">
+				<%= if ((Enum.min(@loaded_pages) - 1 > 0)) and ((Enum.min(@loaded_pages) - 1) not in @loaded_pages) do %>
+							<%= live_patch(
+								to:
+									Routes.product_admin_index_path(
+										@socket,
+										:index,
+										Map.to_list(Map.put(@filter_options, :page, Enum.min(@loaded_pages) - 1))
+									),
+									class: "p-2 dark:text-rose-100 hover:text-rose-400 dark:hover:text-rose-200 rounded-2xl cursor-pointer text-center"
+							) do %>
+								<svg class="h-6 w-6 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+								</svg>
+								<p>show previous porducts</p>
+
+							<% end %>
+				<% end %>
+			</div>
+			<%= for i <- 1..@max_page do %>
+				<%= if @pages[:"page_#{i}"] do %>
+					<div id="<%= i %>" class="grid grid-cols-1 gap-y-2 mt-2">
+						<%= for product <- @pages[:"page_#{i}"] do %>
+							<div
+								class="col-span-12 grid grid-cols-12 mb-0 hover:bg-rose-200 dark:hover:bg-denim-400 bg-rose-100 dark:bg-midnight-500 rounded-2xl nimate-pulse dark:bg-denim-400"
+							>
+								<p class="col-span-10 lg:col-span-5 py-4 w-auto text-gray-800 dark:text-rose-100 px-4 relative">
+
+								</p>
+								<p class="col-span-2 py-4 w-auto text-gray-800 dark:text-rose-100 px-4 hidden lg:block relative">
+
+								</p>
+								<p class="col-span-4 py-4 w-24 text-gray-800 dark:text-rose-100 px-4 hidden lg:block relative">
+
+								</p>
+
+								<ul class="flex justify-center py-4 text-gray-800 dark:text-rose-100 text-center relative">
+									<li>
+										<%= live_redirect to: "#" do  %>
+											<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+											</svg>
+										<% end %>
+									</li>
+									<li class="ml-2">
+										<%= live_patch to: "#" do %>
+											<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+											</svg>
+										<% end %>
+									</li>
+								</ul>
+							</div>
+						<% end %>
+					</div>
+				<% end %>
+			<% end %>
+
+		</section>
+
+		<%= if load_more?(@filter_options.page, @total_pages) do
+					live_patch("Load More",
+						to:
+							Routes.product_admin_index_path(
+								@socket,
+								:index,
+								Map.to_list(Map.put(@filter_options, :page, Enum.max(@loaded_pages) + 1))
+							),
+							class: "block mt-12 mx-auto sm:w-full uppercase max-w-xs p-4 xs:px-12 sm:px-6 md:px-8 xs:py-6 md:py-8 text-3xl dark:text-rose-100 font-bold bg-rose-100 hover:bg-rose-200 rounded-2xl dark:bg-denim-400 cursor-pointer text-center",
+							id: "load_more",
+							"phx-hook": "InfiniteScroll",
+							"data-load-more": "#{load_more?(@filter_options.page, @total_pages)}"
+
+					)
+		end %>
+		<!-- component -->
+		<%# live_component(@socket, InBeautyWeb.PaginationComponent,
+			[
+				filter_options: @filter_options,
+				page_size: @products.page_size,
+				page_number: @products.page_number,
+				total_pages: @products.total_pages
+			]
+				)
+		%>
+	<%= live_redirect "New Product", to: Routes.product_admin_new_path(@socket, :create), class: "block w-60 text-xl font-semibold uppercase py-3 px-6 mt-6 sm:mx-auto ml-6 rounded-2xl bg-denim-100 text-white text-center" %>
+</section>

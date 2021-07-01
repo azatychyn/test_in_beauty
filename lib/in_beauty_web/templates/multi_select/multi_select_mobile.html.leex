@@ -1,0 +1,28 @@
+<section class="relative max-w-xs xs:max-w-full w-11/12 xs:w-auto">
+  <div
+    class="flex relative p-1 w-full"
+  >
+    <p class="w-32 text-xl font-medium text-rose-100 my-auto mr-12 break-all"><%= @placeholder %>:</p>
+    <div class="flex items-center justify-center z-20 w-40 h-16 bg-white dark:bg-midnight-500 border-2 border-rose-300 rounded-2xl relative">
+      <select name="<%= @field %>[]" multiple phx-debounce="blur" class="absolute z-10 p-2.5 h-full w-full opacity-0">
+        <%= for variant <- @variants do %>
+          <option
+            value="<%= variant %>"
+            <%= if variant in @selected_variants, do: "selected" %>
+          >
+          <%= variant %>
+          </option>
+        <% end %>
+      </select>
+      <p class="w-full px-2 py-1 text-center text-xl text-gray-500 dark:text-gray-400 break-all">
+        <%= @placeholder %>
+      </p>
+      <div class="absolute bottom-1 right-1 p-2.5 h-10 w-10 ml-4">
+        <svg class="text-rose-100" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122" />
+        </svg>
+      </div>
+    </div>
+    <input type="hidden" name="<%= @field %>[]" value="" />
+  </div>
+</section>

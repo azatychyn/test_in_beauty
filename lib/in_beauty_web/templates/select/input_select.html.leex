@@ -1,0 +1,54 @@
+<section
+  class="w-full flex flex-col relative"
+    x-data="{ open: false}"
+    @click.away="open = false"
+>
+  <div class="flex items-center justify-center bg-gradient-to-r dark:from-rose-100 dark:to-rose-300 rounded-2xl" @click="open = true">
+    <%= f = form_for @changeset, "#", @handle_events ++ [phx_target: @target, class: "w-full"] %>
+    <div class="flex mb-2">
+      <%= error_wrapper(f, :"#{@field}") %>
+    </div>
+      <%= text_input(f, :"#{@field}",
+            [
+              "phx-debounce": "500",
+              required: true,
+              placeholder: "Начните печатать, чтобы выбрать дом",
+              autocomplete: "off",
+              class: "w-full p-4 text-lg font-medium dark:text-midnight-500 rounded-2xl focus:outline-none focus:ring focus:ring-rose-300 dark:focus:ring-rose-100 focus:bg-white dark:bg-rose-100 dark:focus:bg-white h-16"
+            ]
+          )
+      %>
+    </form>
+  </div>
+<!-- DROPDOWN -->
+  <%# <div x-show="false">
+    <ol class="mt-4 w-full flex flex-col py-3 bg-white dark:bg-denim-500 rounded-2xl shadow-2xl"> %>
+      <%# cond do %>
+      <%# @variants in ["", [], [""]] -> %>
+        <%# <div class="flex px-4 py-2 text-xl text-gray-700 dark:text-gray-100">Начните печатать</div> %>
+      <%# @variants == :error -> %>
+        <%# <div class="flex px-4 py-2 text-xl text-gray-700 dark:text-gray-100">Заполните поля</div> %>
+      <%# @variants == nil -> %>
+        <%# <div class="flex px-4 py-2 text-xl text-gray-700 dark:text-gray-100">Начните печатать</div> %>
+      <%# true -> %>
+        <%# for {variant, i} <- Enum.with_index(@variants) do %>
+          <%# <li %>
+              <%# phx-target="@target" %>
+              <%# phx-click="update_#{@field]" %>
+              <%# phx-value-i="i" %>
+              <%# class=" flex hover:bg-rose-100  cursor-pointer" %>
+            <%# > %>
+            <%# <div class="flex px-4 py-2 text-xl text-gray-700 dark:text-gray-100"> %>
+              <%# <p> %>
+                <%# "
+                  #{Map.get(variant, :"#{@field}_type")},
+                  #{Map.get(variant, :"#{@field}")}
+                " %>
+              <%# </p>
+            </div>
+          </li> %>
+        <%# end %>
+      <%# end %>
+    <%# </ol> %>
+  <%# </div> %>
+</section>

@@ -1,0 +1,147 @@
+<%= if @live_action == :map do
+		map_live_modal @socket, InBeautyWeb.MapComponent,
+      [
+        id: :map_component,
+        session_id: @session_id,
+        delivery_point: @delivery_point,
+        delivery_points: @delivery_points,
+        delivery: @delivery,
+        delivery_params: @delivery_params,
+        delivery_type: @delivery.delivery_type,
+        delivery_changeset: @delivery_changeset,
+        return_to: Routes.order_new_path(@socket, :new)
+      ]
+  end %>
+<%= if @live_action == :search do
+		search_live_modal @socket, InBeautyWeb.SearchComponent,
+      [
+        id: :search_component,
+        fields: [:city],
+        delivery_changeset: Delivery.changeset(@delivery),
+        changeset: :search,
+        session_id: @session_id,
+        delivery: @delivery,
+        device: @device,
+        delivery_type: @delivery.delivery_type,
+        live_action: @live_action,
+        handle_events: [phx_change: :search],
+        return_to: Routes.order_new_path(@socket, :new)
+      ]
+  end %>
+<%= if @live_action == :courier do
+		search_live_modal @socket, InBeautyWeb.CourierDeliveryComponent,
+      [
+        id: :courier_component,
+        fields: [:street, :flat],
+        session_id: @session_id,
+        delivery_changeset: @delivery_changeset,
+        device: @device,
+        live_action: @live_action,
+        handle_events: [phx_submit: :save],
+        return_to: Routes.order_new_path(@socket, :new)
+      ]
+  end %>
+<div class="grid grid-cols-12 gap-8 " x-data="{ tab: 'products' }">
+  <!-- steps -->
+  <ul class="col-span-2 grid grid-cols-1 content-start gap-4 justify-items-stretch w-full justify-between text-3xl uppercase extra-bold max-w-md mx-auto mt-12">
+    <li
+      @click="tab = 'products'"
+      class="flex items-center justify-center w-full rounded-2xl cursor-pointer h-40"
+      :class="tab === 'products' ? 'bg-rose-200' : 'bg-rose-100'"
+    >
+      products
+    </li>
+    <li
+      @click="tab = 'delivery'"
+      class="flex items-center justify-center w-full rounded-2xl cursor-pointer h-40"
+      :class="tab === 'delivery' ? 'bg-rose-200' : 'bg-rose-100'"
+    >
+      delivery
+    </li>
+    <li
+      @click="tab = 'personal_info'"
+      class="flex items-center justify-center w-full rounded-2xl cursor-pointer h-40"
+      :class="tab === 'personal_info' ? 'bg-rose-200' : 'bg-rose-100'"
+    >
+      personal info
+    </li>
+    <li
+      @click="tab = 'personal_info'"
+      class="flex items-center justify-center w-full rounded-2xl cursor-pointer h-40"
+      :class="tab === 'personal_info' ? 'bg-rose-200' : 'bg-rose-100'"
+    >
+      payment
+    </li>
+  </ul>
+  <!-- products-->
+  <div x-show="tab === 'products'" class="col-span-10 my-12 px-4">
+    <div class="w-full max-w-3xl grid gap-4">
+      <%= if @current_cart.stocks_carts == [] do %>
+        #TODO make this beautifull
+        <div class="h-44">Your cart in empty</div>
+      <% else %>
+        <%= for {stock_cart, i} <- Enum.with_index(@current_cart.stocks_carts) do %>
+          <%# inspect stock_cart %>
+          <div class="flex flex-col justify-between p-2 2xl:p-4 md:flex-row xl:flex-col 2xl:flex-row rounded-2xl w-full bg-rose-100">
+            <div class="flex">
+              <a href="#" class="w-32 h-32">
+                <img src="<%= stock_cart.stock.image_path %>" class="w-full h-full object-cover" alt="prod_img">
+              </a>
+              <div class="flex-1 flex flex-col justify-between ml-6 break-all">
+                <p class="2xl:ml-4 text-xl">some Interesting name of my parfum<%= stock_cart.stock.product.name %></p>
+                <p class="2xl:ml-4 text-xl"><%= stock_cart.volume %> <%= gettext("мл")%></p>
+              </div>
+            </div>
+            <div class="flex md:flex-col xl:flex-row 2xl:flex-col justify-between mt-6 2xl:mt-0 2xl:ml-12">
+              <div class="flex items-center w-max mt-1 rounded-2xl">
+                <p class="text-gray-700 text-lg w-12 text-center"><%= stock_cart.quantity %></p>
+                <p><%= gettext("шт") %></p>
+              </div>
+              <p class="text-2xl font-medium text-right mr-4">
+                $<%= stock_cart.stock.price %>
+              </p>
+            </div>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+  <!-- personal info-->
+  <div x-show="tab === 'personal_info'" class="col-span-9">
+    <%= f = form_for @changeset, "step_1", [phx_change: :validate, class: "w-full md:max-w-3xl rounded-2xl my-12 p-6 2xl:p-8 bg-rose-100 dark:bg-midnight-500 grid grid-flow-row grid-cols-1 grid-rows-7 gap-2"] %>
+        <%= for field <- @fields do %>
+            <%= live_component(@socket, InputComponent,
+                [
+                  field: field,
+                  form: f,
+                  label: humanize(field),
+                  required: field in @required_fields,
+                  id_prefix: "step_1",
+                  mobile: false
+                ]
+              )
+            %>
+        <% end %>
+    </form>
+  </div>
+  <!-- delivery -->
+     <%= InBeautyWeb.OrderView.render("delivery.html", [
+        socket: @socket,
+        delivery: @delivery,
+        delivery_point: @delivery_point,
+        delivery_params: @delivery_params
+      ]) %>
+    <%# <p class="my-8 md:max-w-3xl text-center text-main-pink text-2xl font-bold">Персональные данные</p> %>
+
+    <%= submit class: "col-span-full h-40  text-center mb-4 md:mb-0 cursor-pointer focus:outline-none mt-4", phx_click: "save" do %>
+      <div class="bg-rose-100 w-full h-full rounded-2xl flex items-center justify-center">
+        <p class="flex items-center justify-center text-3xl text-gray-700 font-semibold leading-tight mr-4">
+          <%= gettext("Continue") %>
+        </p>
+        <i>
+          <%= InBeautyWeb.IconView.render(InBeautyWeb.IconView, "arrow-right.html") %>
+        </i>
+      </div>
+    <% end %>
+
+</div>

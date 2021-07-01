@@ -1,0 +1,232 @@
+
+<div class="mx-3 mb-12">
+  <div class="grid grid-cols-2 gap-4 w-1/2">
+    <div class="bg-rose-100 w-full rounded-2xl flex items-center justify-around h-32">
+
+      <div class="flex">
+        <div class="w-12 h-12">
+          <%= InBeautyWeb.IconView.render(InBeautyWeb.IconView, "library.html") %>
+        </div>
+        <div class="ml-4">
+          <p class="text-md uppercase text-pink-dark-dribble flex font-bold">
+            <%= gettext("город") %>:
+          </p>
+          <p class="flex items-center justify-center text-2xl text-gray-700 font-semibold leading-tight mr-4">
+            <%= get_changeset_field(@delivery_changeset, :city) || get_changeset_field(@delivery_changeset, :settlement) %>
+          </p>
+        </div>
+      </div>
+    </div>
+    <div class="bg-rose-100 w-full rounded-2xl flex items-center justify-around h-32">
+
+      <div class="flex">
+        <div class="w-12 h-12">
+          <%= InBeautyWeb.IconView.render(InBeautyWeb.IconView, "location.html") %>
+        </div>
+        <div class="ml-4">
+          <p class="text-md uppercase text-pink-dark-dribble flex font-bold">
+            <%= gettext("область") %>:
+          </p>
+          <p class="flex items-center justify-center text-2xl text-gray-700 font-semibold leading-tight mr-4">
+            <%= get_changeset_field(@delivery_changeset, :region) || get_changeset_field(@delivery_changeset, :area) %>
+          </p>
+        </div>
+      </div>
+    </div>
+    <!-- street-->
+    <div class="w-full max-w-xl">
+      <div class="bg-rose-100 p-4 rounded-2xl">
+        <div class="text-2xl font-bold text-main-pink block mb-3 ml-1  tracking-widest">
+          Улица
+        </div>
+        <%= live_component(@socket, InBeautyWeb.InputSelectComponent,
+              variants: @street_suggestions,
+              field: :street,
+              changeset: @delivery_changeset,
+              handle_events: [phx_change: :search_street],
+              target: @myself,
+
+              wrapper_size: "w-20 md:w-96 h-20 md:h-28",
+              device: @device
+            )
+        %>
+      </div>
+    </div>
+    <!-- house-->
+    <div class="w-full max-w-xl">
+      <div class="bg-rose-100 p-4 rounded-2xl">
+        <div class="text-2xl font-bold text-main-pink block mb-3 ml-1  tracking-widest">
+          Дом
+        </div>
+        <%= live_component(@socket, InBeautyWeb.InputSelectComponent,
+              variants: @house_suggestions,
+              field: :house,
+              changeset: @delivery_changeset,
+              handle_events: [phx_change: :search_house],
+              target: @myself,
+              wrapper_size: "w-20 md:w-96 h-20 md:h-28",
+              device: @device
+            )
+        %>
+      </div>
+    </div>
+    <!-- STREET DROPDOWN -->
+        <%= case @street_suggestions in ["", [], [""], :error, nil] do %>
+        <% true -> %>
+        <% _ -> %>
+          <div class="bg-rose-100 col-span-full rounded-2xl p-4 slide-right">
+            <ol class="w-full flex flex-col bg-white dark:bg-denim-500 rounded-2xl">
+                <%= for {variant, i} <- Enum.with_index(@street_suggestions) do %>
+                  <li
+                      phx-target="<%= @myself %>"
+                      phx-click="update_street"
+                      phx-value-i="<%= i %>"
+                      class=" flex hover:bg-rose-100 cursor-pointer"
+                    >
+                    <div class="flex px-4 py-1 text-xl text-gray-700 dark:text-gray-100">
+                      <p>
+                        <%= "
+                          #{Map.get(variant, :"street_type")},
+                          #{Map.get(variant, :"street")}
+                        " %>
+                      </p>
+                    </div>
+                  </li>
+                <% end %>
+            </ol>
+          </div>
+        <% end %>
+    <!-- HOUSE DROPDOWN -->
+        <%= case @house_suggestions in ["", [], [""], :error, nil] do %>
+        <% true -> %>
+        <% _ -> %>
+          <div class="bg-rose-100 col-span-full rounded-2xl p-4 slide-right">
+            <ol class="w-full flex flex-col bg-white dark:bg-denim-500 rounded-2xl">
+                <%= for {variant, i} <- Enum.with_index(@house_suggestions) do %>
+                  <li
+                      phx-target="<%= @myself %>"
+                      phx-click="update_house"
+                      phx-value-i="<%= i %>"
+                      class=" flex hover:bg-rose-100 cursor-pointer"
+                    >
+                    <div class="flex px-4 py-1 text-xl text-gray-700 dark:text-gray-100">
+                      <p>
+                        <%= "
+                          #{Map.get(variant, :"house_type")},
+                          #{Map.get(variant, :"house")}
+                        " %>
+                      </p>
+                    </div>
+                  </li>
+                <% end %>
+            </ol>
+          </div>
+        <% end %>
+    <!-- private_house checkbox-->
+    <div class="w-full col-span-full">
+      <div class="flex justify-between bg-rose-100 p-4 rounded-2xl">
+        <div class="text-2xl font-bold text-main-pink block tracking-widest">
+          Частный Дом?
+        </div>
+        <label class="flex justify-center items-center mr-8" phx-click="toggle_private_house" phx-target="<%= @myself %>">
+          <input
+            type="checkbox"
+            name="delivery[private_house]"
+
+            class="
+              appearance-none
+              border
+              border-gray-300
+              rounded-md
+              bg-white
+              group-hover:bg-rose-200
+              group-hover:border-rose-300
+              checked:bg-rose-300
+              checked:border-rose-400
+              h-6
+              w-6
+            "
+            <%= if @private_house, do: "checked" %>
+          />
+        </label>
+      </div>
+    </div>
+    <!-- flat-->
+    <%= if !@private_house do %>
+      <div class="w-full max-w-xl">
+        <div class="bg-rose-100 p-4 rounded-2xl">
+          <div class="text-2xl font-bold text-main-pink block mb-3 ml-1  tracking-widest">
+            Квартира
+          </div>
+          <%= live_component(@socket, InBeautyWeb.InputSelectComponent,
+                variants: @flat_suggestions,
+                field: :flat,
+                changeset: @delivery_changeset,
+                handle_events: [phx_change: :search_flat],
+                target: @myself,
+                wrapper_size: "w-20 md:w-96 h-20 md:h-28",
+                device: @device
+              )
+          %>
+        </div>
+      </div>
+    <% end %>
+    <!-- FLAT DROPDOWN -->
+        <%= case @flat_suggestions in ["", [], [""], :error, nil] do %>
+        <% true -> %>
+        <% _ -> %>
+          <div class="bg-rose-100 col-span-full rounded-2xl p-4 slide-right">
+            <ol class="w-full flex flex-col bg-white dark:bg-denim-500 rounded-2xl">
+                <%= for {variant, i} <- Enum.with_index(@flat_suggestions) do %>
+                  <li
+                      phx-target="<%= @myself %>"
+                      phx-click="update_flat"
+                      phx-value-i="<%= i %>"
+                      class=" flex hover:bg-rose-100 cursor-pointer"
+                    >
+                    <div class="flex px-4 py-1 text-xl text-gray-700 dark:text-gray-100">
+                      <p>
+                        <%= "
+                          #{Map.get(variant, :"flat_type")},
+                          #{Map.get(variant, :"flat")}
+                        " %>
+                      </p>
+                    </div>
+                  </li>
+                <% end %>
+            </ol>
+          </div>
+        <% end %>
+    <!-- datepicker-->
+    <div class="w-full bg-rose-50 p-4 rounded-2xl col-span-full">
+      <p class="text-2xl font-bold text-main-pink block mb-3 ml-1  tracking-widest">
+        Дата
+      </p>
+
+      <%= live_component(@socket, InBeautyWeb.DatePickerComponent,
+            variants: date_variants(),
+            field: :date,
+            changeset: @delivery_changeset,
+            handle_events: [phx_change: :select_date],
+            target: @myself,
+            wrapper_size: "w-20 md:w-96 h-20 md:h-28",
+            device: @device
+          )
+      %>
+      <div class="w-full h-24 bg-rose-100 rounded-2xl flex items-center justify-around mt-4">
+        <div class="flex ">
+          <%= InBeautyWeb.IconView.render(InBeautyWeb.IconView, "clock.html") %>
+          <div class="ml-4">
+            <p class="text-md uppercase text-pink-dark-dribble flex font-bold">
+              <%= gettext("delivery time") %>:
+            </p>
+            <p class="flex items-center justify-center text-2xl text-gray-700 font-semibold leading-tight mr-4">
+              9:00 - 18:00
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <%= submit "save", phx_click: "save", phx_target: @myself, phx_disable_with: "Saving...", class: "flex justify-around items-center w-full text-lg rounded-2xl px-12 py-4 transition duration-300 ease select-none bg-rose-100 hover:bg-rose-300 focus:outline-none" %>
+</div>

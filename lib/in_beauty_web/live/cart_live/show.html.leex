@@ -1,0 +1,124 @@
+<!-- component -->
+<div class="lg:px-4">
+  <div class="flex justify-center my-6 max-w-6xl md:p-4">
+    <div class="flex flex-col w-full">
+      <div class="flex flex-col">
+        <%= if @cart.stocks_carts == [] do %>
+          #TODO make this beautifull
+          <div class="h-44">Your cart in empty</div>
+        <% else %>
+          <%= for {stock_cart, i} <- Enum.with_index(@cart.stocks_carts) do %>
+            <%# inspect stock_cart %>
+            <div class="flex flex-col justify-between p-2 md:p-4 mb-4  md:flex-row md:rounded-2xl w-full">
+              <div class="flex">
+                <a href="#" class="w-32">
+                  <img src="<%= stock_cart.stock.image_path %>" class="w-full" alt="prod_img">
+                </a>
+                <div class="flex-1 flex flex-col justify-between ml-6 break-all">
+                  <%= live_redirect to: Routes.product_show_path(@socket, :show, stock_cart.stock.product ) do %>
+                    <p class="md:ml-4 text-xl">some Interesting name of my parfum<%= stock_cart.stock.product.name %></p>
+                  <% end %>
+                  <p class="md:ml-4 text-xl"><%= stock_cart.volume %> <%= gettext("мл")%></p>
+                </div>
+              </div>
+              <div class="flex md:flex-col justify-between mt-6 md:mt-0 md:ml-12">
+                <div x-data class="flex items-center w-max mt-1 rounded-2xl">
+                  <button
+                    type="button"
+                    phx-click="dec"
+                    phx-value-id="<%= stock_cart.id %>"
+                    phx-throttle="500"
+                    class="flex justify-center items-center text-center hover:text-rose-400 hover:bg-white w-10 h-10 text-2xl rounded-full"
+                    :class="{
+                      'pointer-events-none': <%= stock_cart.quantity  == 1 %>,
+                      'text-gray-300': <%= stock_cart.quantity  == 1 %>,
+                      'text-white': <%= stock_cart.quantity  != 1 %>,
+                      'bg-gray-200': <%= stock_cart.quantity == 1 %>,
+                      'bg-rose-400': <%= stock_cart.quantity  != 1 %>
+                    }"
+                  >
+                    <svg class="w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 12H6" />
+                    </svg>
+                  </button>
+                  <input
+                    id="StockCartNumberInput"
+                    name="stock_cart[quantity]"
+                    phx-hook="StockCartNumberInput"
+                    data-max_quantity="<%= stock_cart.stock.quantity %>"
+                    class="text-gray-700 text-lg w-12 text-center"
+                    value="<%= stock_cart.quantity %>"
+                  >
+                    <button
+                      type="button"
+                      phx-click="inc"
+                      phx-value-id="<%= stock_cart.id %>"
+                      phx-throttle="500"
+                      class="group flex justify-center items-center text-center hover:text-rose-400 hover:bg-white w-10 h-10 text-2xl rounded-full"
+                      :class="{
+                        'pointer-events-none': <%= stock_cart.quantity >= stock_cart.stock.quantity %>,
+                        'text-gray-300': <%= stock_cart.quantity >= stock_cart.stock.quantity %>,
+                        'text-white': <%= stock_cart.quantity < stock_cart.stock.quantity %>,
+                        'bg-gray-200': <%= stock_cart.quantity >= stock_cart.stock.quantity %>,
+                        'bg-rose-400': <%= stock_cart.quantity < stock_cart.stock.quantity %>
+                      }"
+                    >
+                      <svg class="w-6 group-hover:w-10" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                      </svg>
+                    </button>
+                    <button
+                      type="button"
+                      class="flex justify-center items-center text-center hover:text-gray-400 w-10 h-10 text-2xl rounded-full"
+                      phx-click="remove_from_cart"
+                      phx-value-id="<%= stock_cart.id %>"
+                    >
+                      <svg class="w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                  </div>
+                  <p class="text-2xl font-medium text-right mr-4">
+                    $<%= stock_cart.stock.price %>
+                  </p>
+                </div>
+            </div>
+          <% end %>
+        <% end %>
+        <hr class="pb-6 mt-6">
+        <div class="flex flex-wrap">
+          <div class="w-full md:w-1/3 h-36 shadow-sm px-2 text-center mb-4 md:mb-0">
+            <div class="bg-rose-100 w-full h-full rounded-2xl flex flex-col items-center justify-center">
+              <h4 class="text-sm uppercase text-gray-500 leading-tight">
+                Price
+              </h4>
+              <h3 class="text-3xl text-gray-700 font-semibold leading-tight my-3">
+                $ <%= @cart.total_price %>
+              </h3>
+            </div>
+          </div>
+          <div class="w-full md:w-1/3 h-36 shadow-sm px-2 text-center mb-4 md:mb-0">
+            <div class="bg-rose-100 w-full h-full rounded-2xl flex flex-col items-center justify-center">
+              <h4 class="text-sm uppercase text-gray-500 leading-tight">
+                Discont
+              </h4>
+              <h3 class="text-3xl text-gray-700 font-semibold leading-tight my-3">
+                0%
+              </h3>
+            </div>
+          </div>
+          <div class="w-full md:w-1/3 h-36 shadow-sm px-2 text-center mb-4 md:mb-0">
+            <div class="bg-rose-100 w-full h-full rounded-2xl flex flex-col items-center justify-center">
+              <h4 class="text-sm uppercase text-gray-500 leading-tight">
+                Total Price
+              </h4>
+              <h3 class="text-3xl text-gray-700 font-semibold leading-tight my-3">
+                $ <%= @cart.total_price %>
+              </h3>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

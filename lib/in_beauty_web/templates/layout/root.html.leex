@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <%= csrf_meta_tag() %>
+    <%# TODO: know how should be title on sites to render on social networks %>
+    <%= live_title_tag assigns[:page_title] || "InBeauty", suffix: " · Phoenix Framework" %>
+    <link phx-track-static rel="stylesheet" href="<%= Routes.static_path(@conn, "/css/app.css") %>"/>
+    <script defer phx-track-static type="text/javascript" src="<%= Routes.static_path(@conn, "/js/app.js") %>"></script>
+  </head>
+
+  <body x-data="{open: false, openCart: false }" class="bg-white dark:bg-midnight-700 w-screen font-sans subpixel-antialiased">
+    <% (for field <- @current_cart |> Map.from_struct |> Map.take([:id, :session_id])do %>
+      <div><%= inspect field %></div>
+    <% end) %>
+    <%= @current_user && (for field <- @current_user |> Map.from_struct |> Map.take([:email, :first_name, :id, :role, :phone_number])do %>
+      <div><%= inspect field %></div>
+    <% end) %>
+    <%= render("header.html", assigns) %>
+    <%= @inner_content %>
+    <%= render("footer.html", assigns) %>
+  </body>
+</html>
